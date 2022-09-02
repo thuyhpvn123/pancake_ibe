@@ -1,0 +1,19 @@
+syntax = "proto3";
+package updateStorageData;
+option go_package = "/proto";
+import "proto/log.proto";
+
+message UpdateStorageData {
+    bytes Address = 1;
+    map<string, bytes> UpdateStorage = 2; // string for key, 32 bytes for value
+}
+
+message UpdateCodeData {
+    bytes Address = 1;
+    bytes Code = 2;
+}
+
+message UpdateLogsData {
+    bytes Address = 1;
+    repeated log.Log Logs = 2;
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+package validatorBlockVote;
+
+option go_package = "/proto";
+
+message ValidatorBlockVote {
+    bytes LastBlockCount = 1;
+    bytes BlockHash = 2;
+    bytes Address = 3;
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+package checkingTransactionResult;
+import "proto/transaction.proto";
+option go_package = "/proto";
+
+message NodeCheckTransactionsVote {
+  transaction.Transactions  ValidTransactions = 1;
+  transaction.Transactions  InvalidTransactions = 2;
+}
+

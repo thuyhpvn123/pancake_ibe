@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="src/css/bootstrap.min.css" rel="stylesheet">
+    <link href="src/fonts/fontawesome/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="src/css/layout.css">
+    <script src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="container bg-light ">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">          
+            <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+              <h1 class="text-center font-weight-bold">FUNIX PRICING APP</h1>
+              <h3 class="text-center">Please choose items you want to give your prices</h3>    
+            </div>  
+                    <!--Register Participant Modal  -->
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" >
+                        <!-- Button to Open the Modal -->
+              <button type="button" class="btn btn-primary m-t-20" data-toggle="modal" data-target="#myModal">
+                Register
+              </button>
+            
+              <!-- The Modal -->
+              <div class="modal" id="myModal">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                  
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                      <h4 class="modal-title">Register User</h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                      <form id="create">
+                        <div class="form-group">
+                          <label for="name">Name</label>
+                          <input id="name" type="text" class="form-control"></input>
+                          <span class="error error_name"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input id="email" type="email" class="form-control"></input>
+                            <span class="error error_email"></span>
+                        </div>
+                          <button id='btnRegister' type="submit" class="btn btn-primary" >Submit</button>
+                          <p id="create-result"></p>
+                      </form>
+                    </div>
+                    
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-danger" data-dismiss="modal">Close</button>
+    
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>           
+          </div>
+        </div>
+      </div> 
+    </header>
+    <br>
+    <main class="main">
+    <!-- <h2>Toggleable Pills</h2> -->
+    <div class="container">
+      <br>
+      <!-- Nav pills -->
+      <ul class="nav nav-pills" role="tablist">
+        <li class="nav-item1">
+          <a class="nav-link active" data-toggle="pill" href="#home">Home</a>
+        </li>
+        <li class="nav-item2">
+          <a class="nav-link" data-toggle="pill" href="#menu1">Profile</a>
+        </li>
+        <li class="nav-item3">
+          <a class="nav-link" data-toggle="pill" href="#menu2">Products</a>
+        </li>
+        <li class="nav-item4">
+          <a class="nav-link" data-toggle="pill" href="#menu3">Participants</a>
+        </li>
+
+      </ul>
+    
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <!-- Sessions Tab -->
+        <div id="home" class="container tab-pane active"><br>
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                <div class="product">
+                  <!-- Product Here -->
+                </div>
+              </div> 
+            </div>
+          </div>
+        </div>
+        <!-- Profile Tab-->
+        <div id="menu1" class="container tab-pane fade"><br>
+          <div class="col-md-8 mt-1">
+            <div class="card mb-3 content">
+              <h1 class="m-3 pt-3">Profile</h1> 
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <h5 >ID:</h5>
+                    </div>
+                    <div class="col-md-9 text-secondary  " id="profile_id">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <h5 >Full Name:</h5>
+                    </div>
+                    <div class="col-md-9 text-secondary  " id="profile_name">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <h5>Email:</h5>
+                    </div>
+                    <div class="col-md-9 text-secondary  "id="profile_email">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <h5>Account Address:</h5>
+                    </div>
+                    <div class="col-md-9 text-secondary  " id="profile_addr">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <h5>Deviation</h5>
+                    </div>
+                    <div class="col-md-9 text-secondary  "id="profile_devi">
+                      <p>%</p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <h5>Session Number</h5>
+                    </div>
+                    <div class="col-md-9 text-secondary  " id="profile_numSes">
+                    </div>
+                  </div>                
+                </div>
+            </div>
+            <!-- Modal Edit User -->
+            <div>
+              <!-- Button to Open the Modal -->
+              <button type="button" class="btn btn-primary m-t-20" data-toggle="modal" data-target="#myModal1">
+                Edit <span class="fa fa-pencil mr-2"></span>
+              </button>
+            
+              <!-- The Modal -->
+              <div class="modal" id="myModal1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                  
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                      <h4 class="modal-title">Edit User Info</h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                      <form id="edit">
+                        <div class="form-group">
+                          <label for="edit-name">Name</label>
+                          <input id="edit-name" type="text" class="form-control"></input>
+                          <label for="edit-email">Email</label>
+                          <input id="edit-email" type="text" class="form-control"></input>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <p id="edit-result"></p>
+                      </form>
+            
+                    </div>
+                    
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                      <p id="create-result"></p>
+    
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+                      
+            </div>
+            
+          </div>
+        </div>
+        <!-- Products Tab-->
+        <div id="menu2" class="container tab-pane fade"><br>
+          <div class="container ">
+            <h2 class="">Product Management</h2>
+            <hr>
+            <div class="row">
+              <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                <div class="panel panel-warning">
+                  <div class="panel-heading">
+                    <h3 class="panel-title" id="panel-title">Create Session 
+                      <!-- &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;  -->
+                      <!-- <span class="fa fa-times-circle ml-20 "></span> -->
+                    </h3>                
+                  </div>
+                  <div class="panel-body">               
+                    <form id="add_product">
+                      <div class="form-group">
+                        <label for="pName">Product Name</label>
+                        <input type="text" class="form-control" id="pName" value="">
+                        <span class="error error_pname"></span>
+                        </br>
+                        <label for="">Discriptrion</label>                    
+                        <textarea name="" id="description" class="form-control" rows="3" required="required" value=""></textarea> 
+                        <span class="error error_des"></span>
+                        </br>                   
+                        <label for="pId">ID</label>
+                        <input type="number" class="form-control" id="pId" value="" disabled="true">
+                        <span class="error error_pId"></span>
+                        </br> 
+                        <!-- <h5>Image</h5>                         -->
+                        <!-- <div class="custom-file mb-3">
+                          <input type="file" class="custom-file-input" id="customFile" name="filename">
+                          <label class="custom-file-label" for="customFile">Choose image</label>
+                        </div> -->
+                          <!-- <input type="file" accept="image/*" name="image" id="file"> -->
+                      </div>
+                      <div class="mt-3">
+                        <button type="submit" class="btn btn-warning" id="btnCreate" value="btnCreate"><span class="fa fa-plus mr-2"></span>Create</button>
+                        <br>
+                        <br>
+                      </div>              
+                    </form>    
+                    <p id="addP-result" style="color:red; font-style : italic"></p>
+                    <button class="btn btn-danger" id="btnDelete"><span class="fa fa-close mr-2"></span>Cancel</button>
+       
+                  </div>
+                </div>  
+              </div>
+              <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                <!-- <button type="submit" class="btn btn-warning"><span class="fa fa-plus mr-2"></span>Create Session</button>
+                <br>
+                <br> -->
+                <div class="row mt-15">  
+                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="product_table">
+                      <table class="table table-bordered table-hover">
+                        <thead class="thead-light">
+                          <tr >
+                            <th class="text-center" width="15%">Name</th>               
+                            <th class="text-center" width="20%">Description</th>
+                            <th class="text-center" width="5%">ID</th>
+                            <th class="text-center" width="1%">Update Product Info</th>
+                            <th class="text-center" width="20%">Address Session</th>
+                            <th class="text-center" width="20%">Action</th>
+                            <th class="text-center" width="7%">Proposed Price</th>
+                            <th class="text-center" width="7%">Last Price </th>
+                            <th class="text-center" width="5%">Session Status</th>
+                            <th class="text-center" width="5%">Add Image</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                          </tr>
+                        </tbody>
+                      </table>               
+                    </div>              
+                    <p id="notice">
+                      <strong>Notice:</strong> <span  style="color:red"></span>
+                    </p>
+                  </div>    
+                </div>          
+              </div>
+            </div>           
+          </div>
+          <hr>
+        </div>
+        <!-- Participants Tab-->
+        <div id="menu3" class="container tab-pane fade"><br>
+          <div class="container">
+            <h2>List Of Participant</h2>
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> 
+                <div class="participants_table">
+                  <table class="table table-bordered table-striped">
+                    <thead class="thead-light">
+                      <tr >
+                        <th class="text-center" width="20%" >ID</th>
+                        <th class="text-center" width="20%">Name</th>
+                        <th class="text-center" width="20%">Email</th>
+                        <th class="text-center" width="20%">Address</th>
+                        <th class="text-center" width="20%">Number of joined session</th>
+                        <th class="text-center" width="20%">Accumulated Deviation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr></tr>
+                    </tbody>
+                  </table>             
+  
+                </div>             
+              </div>    
+      
+            </div>
+          </div>
+
+        </div>
+
+        
+      </div>
+    </div>
+
+    </main>
+        
+    <footer class="footer">
+      <div class="container bg-light">
+        <h4 class="text-center">
+          Thank you for your time. Have a nice day!
+        </h4>
+      </div>
+    </footer>
+    
+    
+     
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="contract/build/contracts/Main.json"></script>
+
+    <script src="js/web3.min.js"></script>
+    <script  src="js/bootstrap.min.js"></script>
+    <!-- <script src="./dist/bundle.js"></script> -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>
+    <!-- <script src="https://wzrd.in/standalone/buffer"></script>
+    <script src="https://unpkg.com/ipfs-api@9.0.0/dist/index.js"></script>
+    <script src="https://unpkg.com/ipfs/dist/index.min.js"></script> -->
+    <!-- <script type="module" src="js/ipfs.min.js"></script> -->
+
+  </body>
+</html>

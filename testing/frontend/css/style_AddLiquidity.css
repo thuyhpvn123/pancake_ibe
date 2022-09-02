@@ -1,0 +1,121 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.head-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+button {
+  cursor: pointer;
+}
+
+#add-liquidity,
+#log-container {
+  min-width: 400px;
+  font-size: 18px;
+}
+
+#add-liquidity {
+  width: 50%;
+}
+
+#log-container {
+  width: 80%;
+  margin: auto;
+}
+
+h2 {
+  text-align: center;
+}
+
+#add-liquidity .token-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+#add-liquidity .token-container .logo {
+  height: 50px;
+  width: 50px;
+  object-fit: cover;
+}
+
+#add-liquidity .token-container .token-name {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+#add-liquidity .token-container input {
+  margin: 10px 0;
+  padding: 5px 10px;
+  font-size: 20px;
+}
+
+#add-liquidity .button-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#add-liquidity .button-container > div:first-child {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#add-liquidity .button-container .approve-button {
+  width: 48%;
+  display: block;
+  background-color: #33cc33;
+  color: #e6e6e6;
+}
+
+#add-liquidity .button-container .supply-button {
+  margin-top: 30px;
+  display: block;
+  width: 100%;
+  min-width: 100px;
+  background-color: #000099;
+  color: #fff;
+}
+
+.button-container button {
+  font-size: 20px;
+  padding: 10px 0;
+}
+
+/* Log Container */
+#log-container h4 {
+  font-size: 20px;
+  text-decoration: underline;
+}
+
+/* QR Container */
+#qrcode-section {
+  width: 30%;
+  height: 100%;
+  text-align: center;
+}
+
+#qrcode-section .qrcode#qrcode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  height: 300px;
+  margin: auto;
+  border: solid 1px #000;
+}
+
+#qrcode-section .reset-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-weight: 700;
+  background-color: #000099;
+  color: #fff;
+  cursor: pointer;
+}

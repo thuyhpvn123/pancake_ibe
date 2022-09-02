@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PancakeSwap</title>
+    <link rel="stylesheet" href="css/style_AddLiquidity.css">
+
+    <!-- CDN qrcodejs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <h2>Add liquidity</h2>
+    <div class="head-section">
+        <div id="add-liquidity">
+            <p>Address:
+                <!-- Duy chain account -->
+                <!-- <span id="wallet-id">b334335f495e815cc758873a014a135231abe69e</span> -->
+
+                <!-- Duy mobile account -->
+                <span id="wallet-id">d85ae9a6ef6185aea70b1b18c3d3bfd1253ea74e</span>
+
+                <!-- Truong mobile account -->
+                <!-- <span id="wallet-id">03da23787baec56819164a8bfd6483212c6f376b</span> -->
+            </p>
+            <!-- Token A -->
+            <div class="token-container">
+                <div>
+                    <img class="logo" src="./img/Token A.png" alt="logo-token-a">
+                    <span class="token-name">Token A</span>
+                </div>
+                <p>Balance: <span></span></p>
+                <input id="token-A-input" type="number" class="token-input">
+            </div>
+
+            <!-- Token B -->
+            <div class="token-container">
+                <div>
+                    <img class="logo" src="./img/Token B.png" alt="logo-token-b">
+                    <span class="token-name">Token B</span>
+                </div>
+                <p>Balance: <span></span></p>
+                <input id="token-B-input" type="number" class="token-input">
+            </div>
+
+            <!-- Section of prices and pool share -->
+            <!-- Pending this section -->
+
+            <!-- Approve Button -->
+            <div class="button-container">
+                <div>
+                    <button class="approve-button" id="approve-a-btn">Approve A</button>
+                    <button class="approve-button" id="approve-b-btn">Approve B</button>
+                </div>
+                <button class="supply-button" id="supply-btn">Supply</button>
+                <button class="supply-button" id="simple-contract-btn">Test Simple Contract</button>
+            </div>
+        </div>
+
+        <div id="qrcode-section">
+            <h4>QR Code</h4>
+            <div class="qr-container">
+                <div id="qrcode" class="qrcode"></div>
+            </div>
+            <button id="reset-qr-btn" class="reset-button">Remove QR</button>
+        </div>
+    </div>
+
+    <div id="log-container">
+        <h4>Log:</h5>
+            <pre id="log-content"></pre>
+    </div>
+
+    <!-- Web Socket -->
+    <script src="./js/SmartContractConfig.js"></script>
+    <script src="./js/Util.js"></script>
+    <script src="./js/Websocket.js"></script>
+    <script src="./js/AddLiquidity.js"></script>
+</body>
+
+</html>

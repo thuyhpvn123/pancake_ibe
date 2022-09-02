@@ -1,0 +1,13 @@
+syntax = "proto3";
+package nodeBlockVote;
+import "proto/block.proto";
+import "proto/accountState.proto";
+
+option go_package = "/proto";
+
+message NodeBlockVote {
+    block.Block Block = 1;
+    map<string,accountState.AccountState> ChangedAccountStates = 2;
+    bytes Address = 3; 
+    bytes Sign = 4; 
+}

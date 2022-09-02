@@ -1,0 +1,19 @@
+{
+    "address": "d85ae9a6ef6185aea70b1b18c3d3bfd1253ea74e",
+    "ip": "127.0.0.1",
+    "port": 5001,
+    "node_type": "Client",
+    "transaction_per_hash": 10,
+    "hash_per_second": 20,
+    "tick_per_second": 10,
+    "tick_per_slot": 25,
+    "parent_connection": {
+        "address": "d85ae9a6ef6185aea70b1b18c3d3bfd1253ea74e",
+        "ip": "61.28.238.31",
+        "port": 3011,
+        "type": "Node"
+    },
+    "account_db_path": "./db/account",
+    "number_of_validate_poh_routine": 1,
+    "secret_key": "28b83ded0bbad82d2b226ed482fba6965a9f3886cda3f977426eab50eeba6a92"
+}

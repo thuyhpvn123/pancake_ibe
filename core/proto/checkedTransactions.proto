@@ -1,0 +1,10 @@
+syntax = "proto3";
+package checkedTransactions;
+import "proto/transaction.proto";
+option go_package = "/proto";
+
+message CheckedTransactions {
+  transaction.Transactions  Transactions = 1;
+  bytes AggregateSign = 2;
+}
+

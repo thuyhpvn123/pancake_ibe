@@ -1,0 +1,9 @@
+syntax = "proto3";
+package checkingTransactionResult;
+option go_package = "/proto";
+
+message CheckingTransactionResult {
+  bytes TransactionHash = 1;
+  bool Valid = 2;
+}
+

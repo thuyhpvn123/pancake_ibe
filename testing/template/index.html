@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <link type= "text/css" rel="stylesheet" href="style.css"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Test</title>
+    <!-- <link rel="stylesheet" href="/css/style_Swap.css"> -->
+    <link rel="stylesheet" href="/frontend/css/style_Swap.css">
+    <!-- CDN qrcodejs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+        integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        #swap .button-container #approve-lp-btn,#appstatus-lp-btn{
+            background-color: green;
+            color: #ffffff;
+            display: block;
+            width: 48%;
+            min-width: 100px;
+            margin-top: 30px;
+        }
+        #swap .button-container #remove-btn,#add-btn {
+            background-color: green;
+            color: #ffffff;
+            display: block;
+            width: 100%;
+            min-width: 100px;
+            margin-top: 30px;
+        }
+        #swap .button-container #approve-a-btn,#approve-b-btn{
+            background-color: green;
+            color: #ffffff;
+            display: block;
+            width: 24%;
+            min-width: 100px;
+            margin-top: 30px;
+        }
+        #swap .button-container #appstatus-a-btn,#appstatus-b-btn{
+            background-color: blue;
+            color: #ffffff;
+            display: block;
+            width: 24%;
+            min-width: 100px;
+            margin-top: 30px;
+        }
+        #swap .button-container > div:first-child,.button-container >div:nth-child(2) {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        }
+
+        
+    </style>
+
+</head>
+<body>        
+    <!-- <header>
+    <h1>PancakeSwap</h1>
+    <p>Choose your action</p>
+  </header> -->
+
+
+    <!-- <div class="wrapper">
+    <input id="input" type="text" />
+    <button onclick="send()">Send</button>
+    <pre id="output"></pre>
+
+        <div class="form">
+          <input type="text" spellcheck="false" placeholder="Enter text or url">
+          <button>Generate QR Code</button>
+        </div>
+        <div class="qr-code">
+          <img src="qr-code.png" alt="">
+        </div>
+    </div> -->
+
+    <h2>SWAP</h2>
+    <div class="head-section">
+        <div id="swap">
+            <p>Address:
+                <!-- Duy chain account -->
+                <!-- <span id="wallet-id">b334335f495e815cc758873a014a135231abe69e</span> -->
+
+                <!-- Duy mobile account -->
+                <span id="wallet-id">d85ae9a6ef6185aea70b1b18c3d3bfd1253ea74e</span>
+
+                <!-- Truong mobile account -->
+                <!-- <span id="wallet-id">03da23787baec56819164a8bfd6483212c6f376b</span> -->
+            </p>
+
+            <p id="currency">
+                Currency:
+                <span class="currency-value" id="currency-value">1</span>
+                <span class="token-unit" id="token-A-unit">MTD</span>
+                <span>/</span>
+                <span class="token-unit" id="token-B-unit">DDT</span>
+            </p>
+
+            <!-- <input id="mesesage" type="text" class="message"> 
+            <button id="send-button" onclick="send()">Send</button> -->
+            <!-- <div class="mode-selection-container">
+                <button id="A-to-B-btn" class="mode-active">MTD to DDT</button>
+                <button id="B-to-A-btn" class="mode-disabled">DDT to MTD</button>
+                <p id="mode-content"></p>
+            </div> -->
+
+            <!-- Token A -->
+            <div class="token-container">
+                <div>
+                    <img class="logo"  src="/frontend/img/TokenA.png" alt="logo-token-a">
+                    <!-- <span class="token-name">MTD</span> -->
+                </div>
+                <div>
+                    <!-- Button to Open the Modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1">
+                        TOKEN A
+                    </button>
+                    
+                    <!-- The Modal -->
+                    <div class="modal" id="myModal1">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                    
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                            <h4 class="modal-title">Select a Token</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                    
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <form id="tokenA">
+                                    <div class="form-group">
+                                    <label for="tokenAName">Token Address</label>
+                                    <input id="tokenAName" type="text" class="form-control"></input>
+                                    <span class="error error_name"></span>
+                                    </div>
+                                    <button id='tokenMTDA'  class="btn btn-primary" >MTD</button>
+                                    <br>
+                                    <br>
+                                    
+                                    <button id='tokenAddressA' type="submit" class="btn btn-primary" >Submit</button>
+
+                                </form>
+                                
+
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                    
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="create-resultA"></div>
+
+                         
+                <!-- <p>Balance: <span id="balance-value">0</span></p> -->
+                <input id="token-A-input" type="number" class="token-input" placeholder="0.0" value="">
+            </div>
+
+            <!-- Token B -->
+            <div class="token-container">
+                <div>
+                    <img class="logo" src="/frontend/img/TokenB.png" alt="logo-token-b">
+                    <!-- <span class="token-name">DDT</span> -->
+                    <div>
+                        <!-- Button to Open the Modal -->
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal2">
+                            TOKEN B
+                        </button>
+                        
+                        <!-- The Modal -->
+                        <div class="modal" id="myModal2">
+                            <div class="modal-dialog">
+                            <div class="modal-content">
+                        
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                <h4 class="modal-title">Select a Token</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                        
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <form id="tokenB">
+                                        <div class="form-group">
+                                        <label for="tokenBName">Token Address</label>
+                                        <input id="tokenBName" type="text" class="form-control"></input>
+                                        <span class="error error_name"></span>
+                                        </div>
+                                        <button id='tokenMTDB'  class="btn btn-primary" >MTD</button>
+                                        <br>
+                                        <br>
+                                    
+                                        <button id='tokenAddressB' type="submit" class="btn btn-primary" >Submit</button>
+
+                                    </form>
+                                    
+
+                                </div>
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                </div>
+                        
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="create-resultB"></div>
+
+                </div>
+                <!-- <p>Balance: <span id="balance-value">0</span></p> -->
+                <input id="token-B-input" type="number" class="token-input" placeholder="0.0" value="">
+            </div>
+            <!-- Liquidity -->
+            <div class="token-container">
+                <p>Liquidity Remove</p>
+                <input id="liquidity-input" type="number" class="token-input" placeholder="0.0" value="">
+            </div>
+
+            <!-- Price -->
+            <div class="price-container">
+                <p>Price
+                    <span class="price-content" id="price-content">1</span>
+                    <span id="token-A-unit">MTD</span>
+                    per
+                    <span id="token-B-unit">DDT</span>
+                </p>
+
+                <p>Slippage Tolerance
+                    <span class="slippage-content" id="slippage-content">
+                        0.5%
+                    </span>
+                </p>
+            </div>
+
+            <!-- Swap Button -->
+            <div class="button-container">
+                <!-- <button class="swap-button" id="price-btn" >Get Price A To B</button> -->
+                <div>
+                    <button class="approve-button" id="approve-a-btn">Approve A</button>  
+                    <button class="approve-button" id="appstatus-a-btn">Approve A Status:</button>                  
+                    <button class="approve-button" id="approve-b-btn">Approve B</button>    
+                    <button class="approve-button" id="appstatus-b-btn">Approve B Status:</button>                  
+
+                </div>
+                <div>
+                    <button class="approve-btn" id="approve-lp-btn">Approve Liquidity</button>
+                    <button class="approve-button" id="appstatus-lp-btn">Approve LP Status:</button>                  
+                </div>
+                <button class="supply-button" id="add-btn">Addiquility</button>
+                <button class="remove-button" id="remove-btn">Remove</button>
+                <button class="swap-button" id="supply-btn">Swap</button>
+            </div>
+        </div>
+
+        <div id="qrcode-section">
+            <h4>QR Code</h4>
+            <div class="qr-container">
+                <div id="qrcode" class="qrcode"></div>
+            </div>
+            <button id="reset-qr-btn" class="reset-button">Remove QR</button>
+        </div>
+    </div>
+
+    <div id="log-container">
+        <h4>Log:</h5>
+            <pre id="log-content"></pre>
+    </div>
+
+
+    
+      <!-- </script> -->
+      <script type="text/javascript" src="/frontend/js/SmartContractConfig.js"></script>
+      <script type="text/javascript" src="/frontend/js/Util.js"></script>
+      <script type="text/javascript" src="/frontend/js/Websocket.js"></script>
+      <!-- <script src="./js/Swap.js"></script> -->
+</body>
+</html>
