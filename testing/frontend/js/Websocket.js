@@ -2,8 +2,11 @@ var flag =1;
 
 const output = document.getElementById("log-content");
 let approveToken="";
+let balanceToken="";
 const socket = new WebSocket("ws://127.0.0.1:3000/ws");
 const walletAddress = getElemenetById("wallet-id").innerHTML;
+// const walletAddressOwner = getElemenetById("wallet-id-owner").innerHTML;
+
 let socketActive = false;
 
 console.log("Imported");
@@ -57,32 +60,53 @@ socket.onmessage = (msg) => {
     case "GetApprove":
       switch (approveToken){
         case "A":
-          if(getElemenetById(`token-A-input`).value <= data12.message){
-            document.getElementById('appstatus-a-btn').innerHTML = '<span class="fa fa-plus mr-2"></span>Approved'
-    
+          if(parseInt(getElemenetById(`token-A-input`).value )<= parseInt(data12.message)){
+            document.getElementById('appstatus-a').innerHTML = 'Approved'
+
           }else{
-            document.getElementById('appstatus-a-btn').innerHTML = '<span class="fa fa-plus mr-2"></span>Not yet'
+            document.getElementById('appstatus-a').innerHTML = 'Not yet'
           }
           break;
         case "B":
-          if(getElemenetById(`token-B-input`).value <= data12.message){
-            document.getElementById('appstatus-b-btn').innerHTML = '<span class="fa fa-plus mr-2"></span>Approved'
-    
+          if(parseInt(getElemenetById(`token-B-input`).value )<= parseInt(data12.message)){
+            document.getElementById('appstatus-b').innerHTML = '<span class="fa fa-plus mr-2"></span>Approved'
+            console.log(getElemenetById(`token-B-input`).value)
+            console.log(data12.message)
+
           }else{
-            document.getElementById('appstatus-b-btn').innerHTML = '<span class="fa fa-plus mr-2"></span>Not yet'
+            document.getElementById('appstatus-b').innerHTML = '<span class="fa fa-plus mr-2"></span>Not yet'
           }
           break;
         case "LP":
-          if(getElemenetById(`token-lp-input`).value <= data12.message){
-            document.getElementById('appstatus-lp-btn').innerHTML = '<span class="fa fa-plus mr-2"></span>Approved'
+          if(parseInt(getElemenetById('liquidity-input').value) <= parseInt(data12.message)){
+            document.getElementById('appstatus-lp').innerHTML = 'Approved'
     
           }else{
-            document.getElementById('appstatus-lp-btn').innerHTML = '<span class="fa fa-plus mr-2"></span>Not yet'
+            document.getElementById('appstatus-lp').innerHTML = 'Not yet'
           }
+          break;
+        default:
           break;
       }
       break;
-      default:
+      case "GetBalance":
+        switch (balanceToken){
+          case "A":
+              document.getElementById('balanceA').innerHTML = data12.message
+            break;
+          case "B":
+              document.getElementById('balanceB').innerHTML = data12.message
+            break;
+          case "LP":
+            document.getElementById('balanceLP').innerHTML = data12.message
+          break;
+
+          default:
+            break;
+        }
+        break;
+  
+    default:
       break;
   }
 };
@@ -90,22 +114,23 @@ socket.onmessage = (msg) => {
 
 const wallAddress = getElemenetById("wallet-id").innerHTML;
 
-let sendMessage = (msg) => {
-  console.log(msg);
-  socket.send(JSON.stringify(msg));
-};
+
 //Choose Token Address
 const $tokenA = document.getElementById('tokenA');
 const $createResultA = document.getElementById('create-resultA');
 const $tokenB = document.getElementById('tokenB');
 const $createResultB = document.getElementById('create-resultB');
+const $LPtoken = document.getElementById('LPtoken');
+const $createResultLP = document.getElementById('create-resultLP');
 const $tokenMTDA = document.getElementById('tokenMTDA');
 const $tokenMTDB = document.getElementById('tokenMTDB');
 let tokenAddressA ="";
 let tokenAddressB ="";
+let lpToken ="";
 $tokenA.addEventListener('submit', async(e) => {
   e.preventDefault();
-
+  document.getElementById('appstatus-a').innerHTML =""
+  document.getElementById('appstatus-lp').innerHTML =""
   var name,flag =1
   name = $('#tokenAName').val()
 
@@ -117,10 +142,12 @@ $tokenA.addEventListener('submit', async(e) => {
   }
   if(flag==1){
     try{
-      
-      $createResultA.innerHTML = ` ${name} `;
+      console.log("getBalance111a")
       tokenAddressA = name;
-          
+      await getBalanceToken(name); 
+      console.log("getBalance222a")   
+      $createResultA.innerHTML = name;
+      balanceToken = "A";
     }catch(e){
       console.log(e)
     $createResultA.innerHTML = `Ooops... there was an error while trying to get token address`;
@@ -131,6 +158,8 @@ $tokenA.reset()
 });
 $tokenB.addEventListener('submit', async(e) => {
   e.preventDefault();
+  document.getElementById('appstatus-b').innerHTML =""
+  document.getElementById('appstatus-lp').innerHTML =""
   var name,flag =1
   name = $('#tokenBName').val()
 
@@ -142,8 +171,12 @@ $tokenB.addEventListener('submit', async(e) => {
   }
   if(flag==1){
     try{
-      $createResultB.innerHTML = ` ${name} `;
       tokenAddressB = name;
+      console.log("getBalance111b")
+      await getBalanceToken(name);
+      console.log("getBalance222b")
+      $createResultB.innerHTML = name;
+      balanceToken ="B";
     }catch(e){
       console.log(e)
     $createResultB.innerHTML = `Ooops... there was an error while trying to get token address`;
@@ -155,20 +188,95 @@ $tokenB.reset()
 
 $tokenMTDB.addEventListener("click", async(e) => {
   e.preventDefault();
-  $createResultB.innerHTML = MTDToken.address;
+  document.getElementById('appstatus-b').innerHTML =""
+  document.getElementById('balanceB').innerHTML =""
+  document.getElementById('appstatus-lp').innerHTML =""
   tokenAddressB = MTDToken.address;
+  // getBalanceToken(tokenAddressB);
+  $createResultB.innerHTML = MTDToken.address;
+  balanceToken = "LP";
+  
 });
 $tokenMTDA.addEventListener("click", async(e) => {
   console.log("thuy day")
   e.preventDefault();
-  $createResultA.innerHTML = MTDToken.address;
+  document.getElementById('appstatus-a').innerHTML =""
+  document.getElementById('balanceA').innerHTML =""
+  document.getElementById('appstatus-lp').innerHTML =""
   console.log(MTDToken)
   tokenAddressA = MTDToken.address;
+  // getBalanceToken(tokenAddressA);
+  $createResultA.innerHTML = MTDToken.address;
+  balanceToken = "LP";
+});
+$LPtoken.addEventListener('submit', async(e) => {
+  e.preventDefault();
+  document.getElementById('appstatus-lp').innerHTML =""
+  var name,flag =1
+  name = $('#tokenLPName').val()
+
+  if( name ==''){
+    flag=0
+    $('.error_name').html("Please type token address")
+  }else{
+    $('.error_name').html("")
+  }
+  if(flag==1){
+    try{
+      lpToken= name;
+      await getBalanceToken(name);
+      $createResultLP.innerHTML = name;
+      balanceToken ="LP";
+    }catch(e){
+      console.log(e)
+    $createResultB.innerHTML = `Ooops... there was an error while trying to get token address`;
+    }
+  }
+$LPtoken.reset()
+
 });
 
 //GetPriceList   
 
+const getBalanceToken = (address) => {
+  console.log("getBalance333")
+    let getBalanceMessage = {
+      type: "GetBalance",
+      message: `${address}`,  
+    }
+    // console.log(getPriceMessage);
+    sendMessage(getBalanceMessage);
+    console.log("getBalance444")
+};
 
+// let getPrice = (event) => {
+//   if (event.key == "Enter") {
+//     event.preventDefault();
+//     let getPriceMessage = {
+//       type: "GetPriceList",
+//       message: "",
+//     };
+
+//     switch (event.target.id) {
+//       case "token-A-input":
+//         // console.log("GetPriceList from token MTD for DDT");
+//         getPriceMessage.message = getElemenetById("token-A-input").value;
+//         // approveToken = "A";
+//         break;
+//       case "token-B-input":
+//         flag=0;
+//         // console.log("GetPriceList from token DDT for MTD");
+//         getPriceMessage.message = getElemenetById("token-B-input").value;
+//         // approveToken = "B";
+//         break;
+//       default:
+//         break;
+//     }
+
+//     // console.log(getPriceMessage);
+//     sendMessage(getPriceMessage);
+//   }
+// };
 let getPrice = (event) => {
   if (event.key == "Enter") {
     event.preventDefault();
@@ -179,27 +287,33 @@ let getPrice = (event) => {
 
     switch (event.target.id) {
       case "token-A-input":
-        // console.log("GetPriceList from token MTD for DDT");
-        getPriceMessage.message = getElemenetById("token-A-input").value;
-        approveToken = "A";
+        getPriceMessage.message= getElemenetById("token-A-input").value+','+tokenAddressA+','+tokenAddressB;
         break;
       case "token-B-input":
         flag=0;
-        // console.log("GetPriceList from token DDT for MTD");
-        getPriceMessage.message = getElemenetById("token-B-input").value;
-        approveToken = "B";
+        getPriceMessage.message= getElemenetById("token-B-input").value+','+tokenAddressB+','+tokenAddressA;
         break;
       default:
         break;
     }
-
-    // console.log(getPriceMessage);
     sendMessage(getPriceMessage);
   }
 };
 
-getElemenetById("token-A-input").addEventListener("keypress", getPrice);
-getElemenetById("token-B-input").addEventListener("keypress", getPrice);
+getElemenetById("token-A-input").addEventListener("keypress", (event)=>{
+  if ( tokenAddressA=== tokenAddressB){
+    alert(' Can not swap same token address. Choose another token address!')
+  }else{
+    getPrice(event)
+  }
+});
+getElemenetById("token-B-input").addEventListener("keypress", (event)=>{
+  if (tokenAddressA=== tokenAddressB){
+    alert(' Can not swap same token address. Choose another token address!')
+  }else{
+    getPrice(event)
+  }
+});
 
 //Approve Button
 // const handleApproveBtn = () => {
@@ -274,17 +388,38 @@ const handleAdd = () => {
   sendMessage(addMessage);
 
   //Format input
-  let inputMessage = structuredClone(SMRouter.addLiquidity);
-  inputMessage.parameter[1].value = tokenAddressA;
-  inputMessage.parameter[2].value = tokenAddressB;
-  inputMessage.parameter[3].value = getElemenetById(`token-A-input`).value;
-  inputMessage.parameter[4].value = getElemenetById(`token-B-input`).value;
-  inputMessage.parameter[7].value = wallAddress;
-  inputMessage.parameter[8].value = DEADLINE;
+  let inputMessage 
+  let amount 
+  if(tokenAddressA == MTDToken.address){
+    inputMessage = structuredClone(SMRouter.addLiquidityMTD);
+    inputMessage.parameter[1].value = tokenAddressB;
+    inputMessage.parameter[2].value = getElemenetById(`token-B-input`).value;
+    inputMessage.parameter[5].value = wallAddress;
+    inputMessage.parameter[6].value = DEADLINE;
+    amount = getElemenetById(`token-A-input`).value
+    console.log("amount:",amount)
+  }else if(tokenAddressB == MTDToken.address){
+    inputMessage = structuredClone(SMRouter.addLiquidityMTD);
+    inputMessage.parameter[1].value = tokenAddressA;
+    inputMessage.parameter[2].value = getElemenetById(`token-A-input`).value;
+    inputMessage.parameter[5].value = wallAddress;
+    inputMessage.parameter[6].value = DEADLINE;
+    amount = getElemenetById(`token-B-input`).value
+    console.log("amount:",amount)
+  }else{
+    inputMessage= structuredClone(SMRouter.addLiquidity);
+    inputMessage.parameter[1].value = tokenAddressA;
+    inputMessage.parameter[2].value = tokenAddressB;
+    inputMessage.parameter[3].value = getElemenetById(`token-A-input`).value;
+    inputMessage.parameter[4].value = getElemenetById(`token-B-input`).value;
+    inputMessage.parameter[7].value = wallAddress;
+    inputMessage.parameter[8].value = DEADLINE;
+  
+  }
 
   //Print QRCode
   eraseAvailableQR();
-  makeQR(formatInput("call", SMRouter.address, "", inputMessage.parameter));
+  makeQR(formatInput("call", SMRouter.address, amount, inputMessage.parameter));
 };
 const handleSwap = () => {
   //Send to backend a flag that this address is calling liquidity adding
@@ -293,7 +428,8 @@ const handleSwap = () => {
   swapMessage.message = walletAddress;
 
   sendMessage(swapMessage);
-  let inputMessage
+  let inputMessage;
+  let amount;
   if(tokenAddressA == MTDToken.address)
   {
     inputMessage = structuredClone(SMRouter.swapMTD);
@@ -301,6 +437,7 @@ const handleSwap = () => {
     inputMessage.parameter[4].value = DEADLINE;
     inputMessage.parameter[6].value = MTDToken.address;
     inputMessage.parameter[7].value = tokenAddressB;
+    amount = getElemenetById(`token-A-input`).value
   }
   else if(tokenAddressB == MTDToken.address)
   {
@@ -310,7 +447,7 @@ const handleSwap = () => {
     inputMessage.parameter[5].value = DEADLINE;
     inputMessage.parameter[7].value = tokenAddressA;
     inputMessage.parameter[8].value = MTDToken.address;
-
+    amount = getElemenetById(`token-B-input`).value
   }
   else{
     inputMessage = structuredClone(SMRouter.swap);
@@ -323,7 +460,7 @@ const handleSwap = () => {
 
   //Print QRCode
   eraseAvailableQR();
-  makeQR(formatInput("call", SMRouter.address, "", inputMessage.parameter));
+  makeQR(formatInput("call", SMRouter.address, amount, inputMessage.parameter));
 };
 const handleRemove = () => {
   //Send to backend a flag that this address is calling liquidity adding
@@ -335,8 +472,8 @@ const handleRemove = () => {
 
   //Format input
   let inputMessage = structuredClone(SMRouter.removeLiquidity);
-  inputMessage.parameter[1].value = document.getElementById('create-resultA').value;
-  inputMessage.parameter[2].value = document.getElementById('create-resultA').value;
+  inputMessage.parameter[1].value = tokenAddressA;
+  inputMessage.parameter[2].value = tokenAddressB;
   inputMessage.parameter[3].value = getElemenetById(`liquidity-input`).value;
   inputMessage.parameter[6].value = wallAddress;
   inputMessage.parameter[7].value = DEADLINE;
@@ -355,7 +492,7 @@ const handleApproveTokenA = () => {
 
   //Print QRCode
   eraseAvailableQR();
-  makeQR(formatInput("call", SMRouter.address, "", inputMessage.parameter));
+  makeQR(formatInput("call", tokenAddressA, "", inputMessage.parameter));
 };
 const handleApproveTokenB = () => {
   //Format input
@@ -366,37 +503,50 @@ const handleApproveTokenB = () => {
 
   //Print QRCode
   eraseAvailableQR();
-  makeQR(formatInput("call", SMRouter.address, "", inputMessage.parameter));
+  makeQR(formatInput("call", tokenAddressB, "", inputMessage.parameter));
 };
-let  handleAppStatus= (event) => {
-  event.preventDefault();
-  let getApproveMessage = {
-    type: "GetApprove",
-    message: "",
-  };
+const handleApproveLPToken = () => {
+  //Format input
+  let inputMessage = structuredClone(LPToken.approve);
+  //Assign value to SMContract Parameter
+  inputMessage.parameter[1].value = SMRouter.address; //spender
+  inputMessage.parameter[2].value = getElemenetById(`liquidity-input`).value; //amount value;
 
-  switch (event.target.id) {
-    case "appstatus-a-btn":
-      getApproveMessage.message = tokenAddressA;
-      approveToken = "A";
-      break;
-    case "appstatus-b-btn":
-      getApproveMessage.message = tokenAddressB;
-      approveToken = "B";
-      break;
-    case "appstatus-lp-btn":
-      getApproveMessage.message = tokenAddressB;
-      approveToken = "LP";
-      break;
+  //Print QRCode
+  eraseAvailableQR();
+  makeQR(formatInput("call", LPToken.address, "", inputMessage.parameter));
+};
+
+// let  handleAppStatus= (event) => {
+//   event.preventDefault();
+//   let getApproveMessage = {
+//     type: "GetApprove",
+//     message: "",
+//   };
+
+//   switch (event.target.id) {
+//     case "appstatus-a-btn":
+//       getApproveMessage.message = tokenAddressA;
+//       approveToken = "A";
+//       break;
+//     case "appstatus-b-btn":
+//       getApproveMessage.message = tokenAddressB;
+//       approveToken = "B";
+//       break;
+//     case "appstatus-lp-btn":
+      
+//       getApproveMessage.message = lpToken;
+//       approveToken = "LP";
+//       break;
   
-    default:
-      break;
-  }
+//     default:
+//       break;
+//   }
 
-  // console.log(getPriceMessage);
-  sendMessage(getApproveMessage);
+//   // console.log(getPriceMessage);
+//   sendMessage(getApproveMessage);
 
-};
+// };
 
 
 getElemenetById("supply-btn").addEventListener("click",handleSwap);
@@ -404,9 +554,27 @@ getElemenetById("add-btn").addEventListener("click",handleAdd);
 getElemenetById("remove-btn").addEventListener("click",handleRemove);
 getElemenetById("approve-a-btn").addEventListener("click",handleApproveTokenA);
 getElemenetById("approve-b-btn").addEventListener("click",handleApproveTokenB);
+getElemenetById("approve-b-btn").addEventListener("click",handleApproveTokenB);
+getElemenetById("approve-lp-btn").addEventListener("click",handleApproveLPToken);
 getElemenetById("appstatus-a-btn").addEventListener("click",handleAppStatus);
 getElemenetById("appstatus-b-btn").addEventListener("click",handleAppStatus);
 getElemenetById("appstatus-lp-btn").addEventListener("click",handleAppStatus);
+let sendMessage = (msg) => {
+  console.log(msg);
+  socket.send(JSON.stringify(msg));
+};
+getElemenetById("reset-qr-btn").addEventListener("click", handleResetQR);
+const handleResetQR = () => {
+  eraseAvailableQR();
+};
+//addLiquidityMTD value=10000
+// f305d719
+// 000000000000000000000000b9C40c5054333975e4fEE5b2972f2481422CD48D token
+// 0000000000000000000000000000000000000000000000000000000000002710 amountdesired
+// 0000000000000000000000000000000000000000000000000000000000000001 amountTokenMin
+// 0000000000000000000000000000000000000000000000000000000000000001 amountMTDMin
+// 000000000000000000000000d85ae9a6ef6185aea70b1b18c3d3bfd1253ea74e to
+// 0000000000000000000000000000000000000000000000056bc75e2d63100000 time
 
 //   38ed1739
 // 00000000000000000000000000000000000000000000000000000002540be400  10000000000
@@ -452,3 +620,6 @@ getElemenetById("appstatus-lp-btn").addEventListener("click",handleAppStatus);
 // 095ea7b3
 // 000000000000000000000000aA557dafC14C7b84E37d479036D1630773FCc788
 // 000000000000000000000000000000000001ed09bead87c0378d8e6400000000
+// balanceOf 
+// 70a08231
+// 0000000000000000000000004e131e2a811f967977bc35f3159b590163e06dfb

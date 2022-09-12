@@ -1,54 +1,54 @@
-// const SMAToken = {
-//   address: "b9C40c5054333975e4fEE5b2972f2481422CD48D",
-//   approve: {
-//     name: "approve",
-//     parameter: [
-//       //Hash
-//       {
-//         type: "hash",
-//         value: "095ea7b3",
-//       },
+const SMAToken = {
+  address: "b9C40c5054333975e4fEE5b2972f2481422CD48D",
+  approve: {
+    name: "approve",
+    parameter: [
+      //Hash
+      {
+        type: "hash",
+        value: "095ea7b3",
+      },
 
-//       //Parameter
-//       {
-//         name: "spender",
-//         type: "address",
-//         value: "",
-//       },
-//       {
-//         name: "amount",
-//         type: "num",
-//         value: "",
-//       },
-//     ],
-//   },
-// };
+      //Parameter
+      {
+        name: "spender",
+        type: "address",
+        value: "",
+      },
+      {
+        name: "amount",
+        type: "num",
+        value: "",
+      },
+    ],
+  },
+};
 
-// const SMBToken = {
-//   address: "148b3c21920A743625974Bf7E7f3b8D675534b74",
-//   approve: {
-//     name: "approve",
-//     parameter: [
-//       //Hash
-//       {
-//         type: "hash",
-//         value: "095ea7b3",
-//       },
+const SMBToken = {
+  address: "148b3c21920A743625974Bf7E7f3b8D675534b74",
+  approve: {
+    name: "approve",
+    parameter: [
+      //Hash
+      {
+        type: "hash",
+        value: "095ea7b3",
+      },
 
-//       //Parameter
-//       {
-//         name: "spender",
-//         type: "address",
-//         value: "",
-//       },
-//       {
-//         name: "amount",
-//         type: "num",
-//         value: "",
-//       },
-//     ],
-//   },
-// };
+      //Parameter
+      {
+        name: "spender",
+        type: "address",
+        value: "",
+      },
+      {
+        name: "amount",
+        type: "num",
+        value: "",
+      },
+    ],
+  },
+};
 const SMToken = {
   // address: "148b3c21920A743625974Bf7E7f3b8D675534b74",
   approve: {
@@ -77,6 +77,28 @@ const SMToken = {
 
 const LPToken = {
   address: "d5a5d37db6f5afc7813649c095dc2a03d500d9f8",
+  approve: {
+    name: "approve",
+    parameter: [
+      //Hash
+      {
+        type: "hash",
+        value: "095ea7b3",
+      },
+
+      //Parameter
+      {
+        name: "spender",
+        type: "address",
+        value: "",
+      },
+      {
+        name: "amount",
+        type: "num",
+        value: "",
+      },
+    ],
+  },
 };
 
 const MTDToken = {
@@ -137,6 +159,49 @@ const SMRouter = {
       },
     ],
   },
+  addLiquidityMTD: {
+    name: "addLiquidityMTD",
+    parameter: [
+      //Hash
+      {
+        type: "hash",
+        value: "f305d719",
+      },
+
+      //Parameter
+      {
+        name: "tokenA",
+        type: "address",
+        value: "",
+      },
+      {
+        name: "amountADesiredA",
+        type: "num",
+        value: "",
+      },
+      {
+        name: "amountAMin",
+        type: "num",
+        value: 0,
+      },
+      {
+        name: "amountBMin",
+        type: "num",
+        value: 0,
+      },
+      {
+        name: "to",
+        type: "address",
+        value: "",
+      },
+      {
+        name: "deadline",
+        type: "num",
+        value: "",
+      },
+    ],
+  },
+
   removeLiquidity: {
   name: "removeLiquidity",
   parameter: [

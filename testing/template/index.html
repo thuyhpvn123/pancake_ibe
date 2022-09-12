@@ -61,43 +61,16 @@
 
 </head>
 <body>        
-    <!-- <header>
-    <h1>PancakeSwap</h1>
-    <p>Choose your action</p>
-  </header> -->
-
-
-    <!-- <div class="wrapper">
-    <input id="input" type="text" />
-    <button onclick="send()">Send</button>
-    <pre id="output"></pre>
-
-        <div class="form">
-          <input type="text" spellcheck="false" placeholder="Enter text or url">
-          <button>Generate QR Code</button>
-        </div>
-        <div class="qr-code">
-          <img src="qr-code.png" alt="">
-        </div>
-    </div> -->
-
-    <h2>SWAP</h2>
     <div class="head-section">
         <div id="swap">
             <p>Address:
-                <!-- Duy chain account -->
-                <!-- <span id="wallet-id">b334335f495e815cc758873a014a135231abe69e</span> -->
-
-                <!-- Duy mobile account -->
-                <span id="wallet-id">d85ae9a6ef6185aea70b1b18c3d3bfd1253ea74e</span>
-
-                <!-- Truong mobile account -->
-                <!-- <span id="wallet-id">03da23787baec56819164a8bfd6483212c6f376b</span> -->
+                
+                <!-- <span id="wallet-id-user">2ef033c8b483eee372f2d157947e623eee1a4037</span> -->
+                <span id="wallet-id">9c987d2b2086c1171fce5c1adb568b7a9b0b1197</span>
             </p>
-
             <p id="currency">
-                Currency:
-                <span class="currency-value" id="currency-value">1</span>
+                
+                <span class="currency-value" id="currency-value"></span>
                 <span class="token-unit" id="token-A-unit">MTD</span>
                 <span>/</span>
                 <span class="token-unit" id="token-B-unit">DDT</span>
@@ -116,56 +89,54 @@
                 <div>
                     <img class="logo"  src="/frontend/img/TokenA.png" alt="logo-token-a">
                     <!-- <span class="token-name">MTD</span> -->
-                </div>
-                <div>
-                    <!-- Button to Open the Modal -->
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1">
-                        TOKEN A
-                    </button>
-                    
-                    <!-- The Modal -->
-                    <div class="modal" id="myModal1">
-                        <div class="modal-dialog">
-                        <div class="modal-content">
-                    
-                            <!-- Modal Header -->
-                            <div class="modal-header">
-                            <h4 class="modal-title">Select a Token</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-                    
-                            <!-- Modal body -->
-                            <div class="modal-body">
-                                <form id="tokenA">
-                                    <div class="form-group">
-                                    <label for="tokenAName">Token Address</label>
-                                    <input id="tokenAName" type="text" class="form-control"></input>
-                                    <span class="error error_name"></span>
-                                    </div>
-                                    <button id='tokenMTDA'  class="btn btn-primary" >MTD</button>
-                                    <br>
-                                    <br>
+                    <div>
+                        <!-- Button to Open the Modal -->
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1">
+                            TOKEN A
+                        </button>
+                        
+                        <!-- The Modal -->
+                        <div class="modal" id="myModal1">
+                            <div class="modal-dialog">
+                            <div class="modal-content">
+                        
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                <h4 class="modal-title">Select a Token</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                        
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <form id="tokenA">
+                                        <div class="form-group">
+                                        <label for="tokenAName">Token Address</label>
+                                        <input id="tokenAName" type="text" class="form-control"></input>
+                                        <span class="error error_name"></span>
+                                        </div>
+                                        <button id='tokenMTDA'  class="btn btn-primary" >MTD</button>
+                                        <br>
+                                        <br>
+                                        
+                                        <button id='tokenAddressA' type="submit" class="btn btn-primary" >Submit</button>
+
+                                    </form>
                                     
-                                    <button id='tokenAddressA' type="submit" class="btn btn-primary" >Submit</button>
 
-                                </form>
+                                </div>
                                 
-
+                                <!-- Modal footer -->
+                                <!-- <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                </div> -->
+                        
                             </div>
-                            
-                            <!-- Modal footer -->
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             </div>
-                    
-                        </div>
                         </div>
                     </div>
-                </div>
-                <div id="create-resultA"></div>
-
-                         
-                <!-- <p>Balance: <span id="balance-value">0</span></p> -->
+                    <div id="create-resultA"></div>    
+                </div>                   
+                <p>Balance: <span id="balanceA"></span></p>
                 <input id="token-A-input" type="number" class="token-input" placeholder="0.0" value="">
             </div>
 
@@ -210,9 +181,9 @@
 
                                 </div>
                                 <!-- Modal footer -->
-                                <div class="modal-footer">
+                                <!-- <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                </div>
+                                </div> -->
                         
                             </div>
                             </div>
@@ -221,44 +192,65 @@
                     <div id="create-resultB"></div>
 
                 </div>
-                <!-- <p>Balance: <span id="balance-value">0</span></p> -->
+                <p>Balance: <span id="balanceB"></span></p>
                 <input id="token-B-input" type="number" class="token-input" placeholder="0.0" value="">
             </div>
-            <!-- Liquidity -->
+
+            <!-- LP Token -->
             <div class="token-container">
-                <p>Liquidity Remove</p>
-                <input id="liquidity-input" type="number" class="token-input" placeholder="0.0" value="">
+                <div>
+                    <div>
+                        <!-- Button to Open the Modal -->
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal3">
+                            LP TOKEN
+                        </button>
+                    
+                        <!-- The Modal -->
+                        <div class="modal" id="myModal3">
+                            <div class="modal-dialog">
+                            <div class="modal-content">
+                        
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                <h4 class="modal-title">Select a LP Token</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                        
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <form id="LPtoken">
+                                        <div class="form-group">
+                                        <label for="tokenLPName">Token Address</label>
+                                        <input id="tokenLPName" type="text" class="form-control"></input>
+                                        <span class="error error_name"></span>
+                                        </div>
+                                        <button id='tokenAddressLP' type="submit" class="btn btn-primary" >Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                            </div>
+                        </div>  
+                    </div>
+                    <div id="create-resultLP">   
+                </div>       
+                    <p>Balance: <span id="balanceLP"></span></p>
+                    <input id="liquidity-input" type="number" class="token-input" placeholder="0.0" value="">
+                </div>
             </div>
 
-            <!-- Price -->
-            <div class="price-container">
-                <p>Price
-                    <span class="price-content" id="price-content">1</span>
-                    <span id="token-A-unit">MTD</span>
-                    per
-                    <span id="token-B-unit">DDT</span>
-                </p>
-
-                <p>Slippage Tolerance
-                    <span class="slippage-content" id="slippage-content">
-                        0.5%
-                    </span>
-                </p>
-            </div>
-
-            <!-- Swap Button -->
+            <!-- Buttons -->
             <div class="button-container">
                 <!-- <button class="swap-button" id="price-btn" >Get Price A To B</button> -->
                 <div>
                     <button class="approve-button" id="approve-a-btn">Approve A</button>  
-                    <button class="approve-button" id="appstatus-a-btn">Approve A Status:</button>                  
+                    <button class="approve-button" id="appstatus-a-btn">Approve A Status:<span id="appstatus-a"></span></button>                  
                     <button class="approve-button" id="approve-b-btn">Approve B</button>    
-                    <button class="approve-button" id="appstatus-b-btn">Approve B Status:</button>                  
+                    <button class="approve-button" id="appstatus-b-btn">Approve B Status:<span id="appstatus-b"></span></button>                  
 
                 </div>
                 <div>
                     <button class="approve-btn" id="approve-lp-btn">Approve Liquidity</button>
-                    <button class="approve-button" id="appstatus-lp-btn">Approve LP Status:</button>                  
+                    <button class="approve-button" id="appstatus-lp-btn">Approve LP Status:<span id="appstatus-lp"></span></button>                  
                 </div>
                 <button class="supply-button" id="add-btn">Addiquility</button>
                 <button class="remove-button" id="remove-btn">Remove</button>

@@ -1,0 +1,3 @@
+[submodule "ibe"]
+	path = ibe
+	url = https://gitlab.com/pancake_ibe/ibe.git

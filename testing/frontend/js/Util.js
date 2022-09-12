@@ -48,13 +48,15 @@ const formatAddressToHex = (address) => {
   if (address === null) return;
   let prefix = "0";
   // return prefix.repeat(64 - address.length) + address.toLowerCase();
-  console.log(prefix.repeat(64 - address.length) + address)
+  // console.log(prefix.repeat(64 - address.length) + address)
 
   return prefix.repeat(64 - address.length) + address;
 };
 
 const processAmount = (amount) => {
-  return "";
+  amountHex = Number(amount).toString(16);
+  console.log('amount:',amountHex)
+  return amountHex;
 };
 
 const formatNumberToHex = (number) => {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/hex"
+	// "encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -31,6 +32,14 @@ type Message struct {
 	Type string      `json:"type"`
 	Msg  interface{} `json:"message"`
 }
+type Message1 struct {
+	Type string      `json:"type"`
+	Msg  []interface{} `json:"message"`
+}
+// type Format1 struct {
+// 	Key string `json:"key"`
+// 	Value string `json:"value"`
+// }
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -45,11 +54,11 @@ var FactoryContract = getFactoryConstant()
 var Token0Contract = getToken0Constant()
 var Token1Contract = getToken1Constant()
 
-// var WbnbContract = getWbnbConstant()
+var WbnbContract = getWbnbConstant()
 var PairContract = getPairConstant()
 
 const (
-	STORAGEHOST = "61.28.238.31:3051"
+	STORAGEHOST = "61.28.238.235:3051"
 )
 
 var accounts = [...]Account{
@@ -57,10 +66,15 @@ var accounts = [...]Account{
 	// 	address: "9c396e149794945b5382c66fd996e78b6ee085c1",
 	// 	private: "4b88398278565510745cecbdd711ae11d330576dbc28d6f3272c62ced00249d6",
 	// },
+	// {
+	// 	address: "d85ae9a6ef6185aea70b1b18c3d3bfd1253ea74e",
+	// 	private: "28b83ded0bbad82d2b226ed482fba6965a9f3886cda3f977426eab50eeba6a92",
+	// },
 	{
-		address: "d85ae9a6ef6185aea70b1b18c3d3bfd1253ea74e",
-		private: "28b83ded0bbad82d2b226ed482fba6965a9f3886cda3f977426eab50eeba6a92",
+		address: "9c987d2b2086c1171fce5c1adb568b7a9b0b1197",
+		private: "666dd436598af42067fbde62cab896ffc2541c7f88c38e9f0a6d12af95f39c1f",
 	},
+
 }
 
 type Account struct {
@@ -74,6 +88,8 @@ type Format struct {
 }
 type Wbnb struct {
 	Address string `json:"address"`
+	Approval Format `json:"approval"`
+	GetApprove Format `json:"getApprove"`
 }
 type Factory struct {
 	Address     string `json:"address"`
@@ -89,6 +105,7 @@ type Token0 struct {
 	Transfer Format `json:"transfer"`
 	Approval Format `json:"approval"`
 	GetApprove Format `json:"getApprove"`
+	GetBalance Format `json:"GetBalance"`
 
 }
 type Token1 struct {
@@ -96,7 +113,7 @@ type Token1 struct {
 	Transfer Format `json:"transfer"`
 	Approval Format `json:"approval"`
 	GetApprove Format `json:"getApprove"`
-
+	GetBalance Format `json:"GetBalance"`
 }
 type Pair struct {
 	Address  string `json:"address"`
@@ -106,7 +123,7 @@ type Pair struct {
 	Burn     Format `json:"burn"`
 	Approval Format `json:"approval"`
 	GetApprove Format `json:"getApprove"`
-
+	GetBalance Format `json:"GetBalance"`
 }
 type Parameter struct {
 	Name string `json:"address"`
@@ -161,8 +178,11 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
 	go HandleReceiveMessage(conn, sendQueue[conn])
 	// result1 := <-sendQueue[conn]
 	// log.Println("sendQueue:",result1)
+	// msgdemo := []string{"Pancakeswap Demo1"}
 	conn.WriteJSON(
+		
 		Message{Type: "message", Msg: "Pancakeswap Demo1"})
+		// Message1{Type: "message", Msg: msgdemo})
 
 	//Get init marketplate data
 	// go getEvent("", RouterContract.Address, "", "", "", "", "", "", "100", "1", conn)
@@ -189,36 +209,49 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
 		// log message
 		fmt.Println(msg)
 		switch msg.Type {
-		// case "ChooseTokenSwap":
-
-		//{"type":"GetPriceList","message":""}
+		// case "GetPriceList":
+		// 	//amount:="1000000000000000000"
+		// 	// s := strconv.Itoa(msg.Msg)
+		// 	// s := fmt.Sprintf("%d", msg.Msg.(string))
+		// 	fmt.Println("This is PriceList")
+		// 	// fmt.Printf(", msg:%v\n", msg.Msg.(string))
+		// 	path := []string{Token0Contract.Address, Token1Contract.Address}
+		// 	go getPriceList(msg.Msg.(string), path, conn)
+		
 		case "GetPriceList":
-			//amount:="1000000000000000000"
-			// s := strconv.Itoa(msg.Msg)
-			// s := fmt.Sprintf("%d", msg.Msg.(string))
 			fmt.Println("This is PriceList")
-			// fmt.Printf(", msg:%v\n", msg.Msg.(string))
-			path := []string{Token0Contract.Address, Token1Contract.Address}
-			go getPriceList(msg.Msg.(string), path, conn)
+			fmt.Println("msg:", msg)
+			msg1 := msg.Msg.(string)
+			fmt.Printf("msgType:%T\n", msg1)
+				amount := msg1[:strings.IndexByte(msg1, ',')]			
+				pathString := msg1[strings.IndexByte(msg1, ',')+1:]
+				token1:=pathString[:strings.IndexByte(pathString, ',')]
+				token2:=pathString[strings.IndexByte(pathString, ',')+1:]
+				path :=[]string{token1,token2}
+
+			go getPriceList(amount, path, conn)
 			//msg.Msg.(string)
-		case "AddLiquidity":
-			amountA := "1000000000000000000"
-			amountB := "1000000000000000000"
-			amountAmin := "1000000000000000000"
-			amountBmin := "1000000000000000000"
-			to := "9c396e149794945b5382c66fd996e78b6ee085c1"
-			time := "100000000000"
-			fmt.Println("This is Addliquidity")
-			go addLiquidity(Token0Contract.Address, Token1Contract.Address, amountA, amountB,
-				amountAmin, amountBmin, to, time, conn)
+
+		// case "AddLiquidity":
+		// 	amountA := "1000000000000000000"
+		// 	amountB := "1000000000000000000"
+		// 	amountAmin := "1000000000000000000"
+		// 	amountBmin := "1000000000000000000"
+		// 	to := "9c396e149794945b5382c66fd996e78b6ee085c1"
+		// 	time := "100000000000"
+		// 	fmt.Println("This is Addliquidity")
+		// 	go addLiquidity(Token0Contract.Address, Token1Contract.Address, amountA, amountB,
+		// 		amountAmin, amountBmin, to, time, conn)
 		case "GetApprove":
 			fmt.Println("This is GetApprove")
-			// path := []string{Token0Contract.Address, Token1Contract.Address}
 			owner:= accounts[0].address
-		fmt.Println("owner:",owner)
 			spender :=RouterContract.Address
 			go getApprove(msg.Msg.(string),owner,spender, conn)
-	
+		case "GetBalance":
+			fmt.Println("This is GetBalance")
+			owner:= accounts[0].address
+			go getBalance(msg.Msg.(string),owner, conn)
+
 		default:
 		}
 	}
@@ -230,10 +263,8 @@ func HandleReceiveMessage(conn *websocket.Conn, sendChan chan Message) {
 		msg := <-sendChan
 
 		// Send it out to every client that is currently connected
-		fmt.Println("msg11111111111", msg)
 		for client := range clients {
 			// Duy added
-			fmt.Println("msg11111111111", msg)
 
 			err := client.WriteJSON(msg)
 			log.Println(msg)
@@ -248,27 +279,27 @@ func HandleReceiveMessage(conn *websocket.Conn, sendChan chan Message) {
 		}
 	}
 }
-func addLiquidity(token0Addr string, token1Addr string, amountA string, amountB string, amountAmin string, amountBmin string, to string, time string, ws *websocket.Conn) {
-	account := getAccountAvailable()
-	conn, chCallData := initCallConnection(account.address)
-	defer conn.TCPConnection.Close()
-	input := formatCall(RouterContract.AddLiquidity.Hash,
-		RouterContract.AddLiquidity.Format,
-		[]interface{}{
-			token0Addr, token1Addr, amountA, amountB, amountAmin, amountBmin, to, time,
-		})
-	fmt.Println(input)
-	sendCallData(conn, enterAddress(RouterContract.Address), common.FromHex(input), chCallData, account.private)
-	receiver := (<-chCallData).(string)
-	fmt.Println("receiver Add:", receiver)
-	giveBackAccount(account)
-	go sentToClient(ws, "AddLiquidity", receiver)
-}
+// func addLiquidity(token0Addr string, token1Addr string, amountA string, amountB string, amountAmin string, amountBmin string, to string, time string, ws *websocket.Conn) {
+// 	account := getAccountAvailable()
+// 	conn, chCallData := initCallConnection(account.address)
+// 	defer conn.TCPConnection.Close()
+// 	input := formatCall(RouterContract.AddLiquidity.Hash,
+// 		RouterContract.AddLiquidity.Format,
+// 		[]interface{}{
+// 			token0Addr, token1Addr, amountA, amountB, amountAmin, amountBmin, to, time,
+// 		})
+// 	fmt.Println(input)
+// 	sendCallData(conn, enterAddress(RouterContract.Address), common.FromHex(input), chCallData, account.private)
+// 	receiver := (<-chCallData).(string)
+// 	fmt.Println("receiver Add:", receiver)
+// 	giveBackAccount(account)
+// 	go sentToClient(ws, "AddLiquidity", receiver)
+// }
 
 func getPriceList(num string, path []string, ws *websocket.Conn) {
 	account := getAccountAvailable()
 	conn, chCallData := initCallConnection(account.address)
-	// defer conn.TCPConnection.Close()
+	defer conn.TCPConnection.Close()
 	input := formatCall(RouterContract.GetPriceList.Hash,
 		RouterContract.GetPriceList.Format,
 		[]interface{}{
@@ -277,16 +308,16 @@ func getPriceList(num string, path []string, ws *websocket.Conn) {
 		})
 	sendCallData(conn, enterAddress(RouterContract.Address), common.FromHex(input), chCallData, account.private)
 	receiver := (<-chCallData).(string)
-	fmt.Println("receiver GetPriceList:", receiver)
+	// fmt.Println("receiver GetPriceList:", receiver)
 	giveBackAccount(account)
 	go sentToClient(ws, "GetPriceList", formatNumber(receiver[192:]))
 }
 func getApprove(tokenAdr string ,owner string, spender string, ws *websocket.Conn) {
 	account := getAccountAvailable()
 	conn, chCallData := initCallConnection(account.address)
-	// defer conn.TCPConnection.Close()
+	defer conn.TCPConnection.Close()
 	fmt.Println("tokenAdr:",tokenAdr)
-	fmt.Println("token1Add:",Token1Contract.Address)
+	fmt.Println("PairAdd:",PairContract.Address)
 	switch strings.ToLower(tokenAdr){
 	case strings.ToLower(Token0Contract.Address):
 		input := formatCall(Token0Contract.GetApprove.Hash,
@@ -295,10 +326,10 @@ func getApprove(tokenAdr string ,owner string, spender string, ws *websocket.Con
 				owner,
 				spender,
 			})
-		fmt.Println("input:", input)
+		// fmt.Println("input:", input)
 		sendCallData(conn, enterAddress(Token0Contract.Address), common.FromHex(input), chCallData, account.private)
 		receiver := (<-chCallData).(string)
-		fmt.Println("receiver GetApprove:", receiver)
+		// fmt.Println("receiver GetApprove:", receiver)
 		giveBackAccount(account)
 		go sentToClient(ws, "GetApprove", formatNumber(receiver))
 	case strings.ToLower(Token1Contract.Address):
@@ -308,20 +339,94 @@ func getApprove(tokenAdr string ,owner string, spender string, ws *websocket.Con
 				owner,
 				spender,
 			})
-		fmt.Println("input:", input)
+		// fmt.Println("input:", input)
 		sendCallData(conn, enterAddress(Token1Contract.Address), common.FromHex(input), chCallData, account.private)
 		receiver := (<-chCallData).(string)
-		fmt.Println("receiver GetApprove:", receiver)
+		// fmt.Println("receiver GetApprove:", receiver)
 		giveBackAccount(account)
 		go sentToClient(ws, "GetApprove", formatNumber(receiver))
+	case strings.ToLower(PairContract.Address):
+		input := formatCall(PairContract.GetApprove.Hash,
+			PairContract.GetApprove.Format,
+			[]interface{}{
+				owner,
+				spender,
+			})
+		// fmt.Println("input:", input)
+		sendCallData(conn, enterAddress(PairContract.Address), common.FromHex(input), chCallData, account.private)
+		receiver := (<-chCallData).(string)
+		// fmt.Println("receiver GetApprove:", receiver)
+		giveBackAccount(account)
+		go sentToClient(ws, "GetApprove", formatNumber(receiver))
+	case strings.ToLower(WbnbContract.Address):
+		input := formatCall(WbnbContract.GetApprove.Hash,
+			WbnbContract.GetApprove.Format,
+			[]interface{}{
+				owner,
+				spender,
+			})
+		// fmt.Println("input:", input)
+		sendCallData(conn, enterAddress(WbnbContract.Address), common.FromHex(input), chCallData, account.private)
+		receiver := (<-chCallData).(string)
+		// fmt.Println("receiver GetApprove:", receiver)
+		giveBackAccount(account)
+		go sentToClient(ws, "GetApprove", formatNumber(receiver))
+
 	}
+	
+}
+func getBalance(tokenAdr string ,owner string, ws *websocket.Conn) {
+	account := getAccountAvailable()
+	conn, chCallData := initCallConnection(account.address)
+	defer conn.TCPConnection.Close()
+	// fmt.Println("tokenAdr:",tokenAdr)
+	// fmt.Println("token1Add:",Token1Contract.Address)
+	switch strings.ToLower(tokenAdr){
+	case strings.ToLower(Token0Contract.Address):
+		input := formatCall(Token0Contract.GetBalance.Hash,
+			Token0Contract.GetBalance.Format,
+			[]interface{}{
+				owner,				
+			})
+		// fmt.Println("input:", input)
+		sendCallData(conn, enterAddress(Token0Contract.Address), common.FromHex(input), chCallData, account.private)
+		receiver := (<-chCallData).(string)
+		// fmt.Println("receiver GetBalance:", receiver)
+		giveBackAccount(account)
+		go sentToClient(ws, "GetBalance", formatNumber(receiver))
+	case strings.ToLower(Token1Contract.Address):
+		input := formatCall(Token1Contract.GetBalance.Hash,
+			Token1Contract.GetBalance.Format,
+			[]interface{}{
+				owner,				
+			})
+		// fmt.Println("input:", input)
+		sendCallData(conn, enterAddress(Token1Contract.Address), common.FromHex(input), chCallData, account.private)
+		receiver := (<-chCallData).(string)
+		// fmt.Println("receiver GetBalance:", receiver)
+		giveBackAccount(account)
+		go sentToClient(ws, "GetBalance", formatNumber(receiver))
+	case strings.ToLower(PairContract.Address):
+		input := formatCall(PairContract.GetBalance.Hash,
+			PairContract.GetBalance.Format,
+			[]interface{}{
+				owner,				
+			})
+		// fmt.Println("input:", input)
+		sendCallData(conn, enterAddress(PairContract.Address), common.FromHex(input), chCallData, account.private)
+		receiver := (<-chCallData).(string)
+		// fmt.Println("receiver GetBalance:", receiver)
+		giveBackAccount(account)
+		go sentToClient(ws, "GetBalance", formatNumber(receiver))
+	}
+	
 	
 }
 
 func sentToClient(ws *websocket.Conn, msgType string, value interface{}) {
-	fmt.Println("log ra ne:", Message{msgType, value})
+	// fmt.Println("log ra ne:", Message{msgType, value})
 	sendQueue[ws] <- Message{msgType, value}
-	fmt.Println("Toi day 22222222222222222222222")
+	// fmt.Println("Toi day 22222222222222222222222")
 }
 
 func giveBackAccount(account Account) {
@@ -426,7 +531,7 @@ func subscribeChain(connRoot *network.Connection) {
 }
 func getToken0Constant() Token0 {
 	return Token0{
-		Address: "b9C40c5054333975e4fEE5b2972f2481422CD48D",
+		Address: "15353116e642971722A71F9bd8Da4CFe9a10D8E9",
 		Transfer: Format{
 			"Transfer",
 			"ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
@@ -453,11 +558,19 @@ func getToken0Constant() Token0 {
 				{Name: "spender", Type: "address"},
 			},
 		},
+		GetBalance: Format{
+			"GetBalance", //function getAmountOunt
+			"70a08231",
+			[]Parameter{
+				{Name: "account", Type: "address"},
+			},
+		},
+
 	}
 }
 func getToken1Constant() Token1 {
 	return Token1{
-		Address: "148b3c21920A743625974Bf7E7f3b8D675534b74",
+		Address: "28817d538D4d6b5522E3b61d2a64703Df7aE6562",
 		Transfer: Format{
 			"Transfer",
 			"ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
@@ -484,11 +597,19 @@ func getToken1Constant() Token1 {
 				{Name: "spender", Type: "address"},
 			},
 		},
+		GetBalance: Format{
+			"GetBalance", //function getAmountOunt
+			"70a08231",
+			[]Parameter{
+				{Name: "account", Type: "address"},
+			},
+		},
+
 	}
 }
 func getPairConstant() Pair {
 	return Pair{
-		Address: "d5a5d37db6f5afc7813649c095dc2a03d500d9f8",
+		Address: "6723d77cd80175ac3cdb6429c07acb4acdbd48d9",
 		Transfer: Format{
 			"Transfer",
 			"ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
@@ -541,6 +662,13 @@ func getPairConstant() Pair {
 				{Name: "spender", Type: "address"},
 			},
 		},
+		GetBalance: Format{
+			"GetBalance", //function getAmountOunt
+			"70a08231",
+			[]Parameter{
+				{Name: "account", Type: "address"},
+			},
+		},
 
 
 	}
@@ -548,7 +676,7 @@ func getPairConstant() Pair {
 
 func getFactoryConstant() Factory {
 	return Factory{
-		Address: "aEB20c1b56d968218A2c15f43b5DaEEd62F85412",
+		Address: "37B34e7E96733D64Ee16C1aDa06709C2e7AA1F86",
 		PairCreated: Format{
 			"PairCreated",
 			"0d3648bd0f6ba80134a33ba9275ac585d9d315f0ad8355cddefde31afa28d0e9",
@@ -562,12 +690,30 @@ func getFactoryConstant() Factory {
 }
 func getWbnbConstant() Wbnb {
 	return Wbnb{
-		Address: "695905E66f8b5b49f3753390c71ef763d6368959",
+		Address: "2dD3d44DA575795C2B88c93eFF76820d0840cc3F",
+		Approval: Format{
+			"Approval",
+			"8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+			[]Parameter{
+				// {Name: "owner", Type: "address"},
+				// {Name: "spender", Type: "address"},
+				{Name: "value", Type: "num"},
+			},
+		},
+		GetApprove: Format{
+			"GetApprove", //function getAmountOunt
+			"dd62ed3e",
+			[]Parameter{
+				{Name: "owner", Type: "address"},
+				{Name: "spender", Type: "address"},
+			},
+		},
+
 	}
 }
 func getRouterConstant() Router {
 	return Router{
-		Address: "3FFb75AcB68A021e978b8bEc4E4762d32060152f",
+		Address: "74A1D8a484B05Ec196036C65a81C56ffB56D67fA",
 		GetPriceList: Format{
 			"GetPriceList", //function getAmountOunt
 			"d06ca61f",
@@ -779,7 +925,7 @@ func getEvent(transactionHash, address, fromBlock,
 	chGet := make(chan interface{})
 	conn := network.ConnectToServer(STORAGEHOST, chGet)
 	conn.SendInitConnection(config.AppConfig.Address)
-	// defer conn.TCPConnection.Close()
+	defer conn.TCPConnection.Close()
 	q := &pb.QueryLog{
 		TransactionHash: common.FromHex(transactionHash),
 		Address:         common.FromHex(address),
@@ -829,6 +975,7 @@ func sendCallData(
 	sendGetAccountState(conn, rootAddress)
 	accountInfo := (<-chCallData).(*pb.AccountState)
 	// Get last transaction
+	fmt.Println("accountInfo:",accountInfo)
 	lastTransaction := cc.GetEmptyTransaction()
 	if hex.EncodeToString(lastTransaction.Hash) != hex.EncodeToString(accountInfo.LastHash) {
 		lastTransaction = readDataLastHash(hex.EncodeToString(accountInfo.LastHash))

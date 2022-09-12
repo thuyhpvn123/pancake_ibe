@@ -15,8 +15,8 @@ button {
 
 #swap,
 #log-container {
-  min-width: 400px;
-  font-size: 18px;
+  min-width: 300px;
+  font-size: 15px;
 }
 
 #swap {
@@ -35,7 +35,7 @@ h2 {
 #swap .token-container {
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
+  padding: 10px 0;
 }
 
 #swap .token-container .logo {
@@ -51,8 +51,8 @@ h2 {
 }
 
 #swap .token-container input {
-  margin: 10px 0;
-  padding: 5px 10px;
+  margin: 5px 0;
+  padding: 3px 3px;
   font-size: 20px;
 }
 
@@ -79,14 +79,14 @@ h2 {
   color: #fff;
   display: block;
   width: 100%;
-  min-width: 100px;
+  min-width: 50px;
   margin-top: 30px;
 }
 #swap .button-container .swap-button {
   margin-top: 30px;
   display: block;
   width: 100%;
-  min-width: 100px;
+  min-width: 50px;
   background-color: green;
   color: #fff;
 }
