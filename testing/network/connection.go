@@ -2,27 +2,34 @@ package network
 
 import (
 	"encoding/binary"
-	"encoding/hex"
+	"errors"
 	"fmt"
 	"net"
-	"strings"
+	"sync"
 
 	"github.com/ethereum/go-ethereum/common"
-	log "github.com/sirupsen/logrus"
-	"gitlab.com/meta-node/client/config"
+	"gitlab.com/meta-node/core/config"
 	pb "gitlab.com/meta-node/core/proto"
+	"gitlab.com/meta-node/core/utilities"
 	"google.golang.org/protobuf/proto"
 )
 
 type Connection struct {
-	Address       []byte `json:"address"`
-	IP            string `json:"ip"`
-	Port          int    `json:"port"`
-	Type          string `json:"type"`
+	mu            sync.Mutex
+	Address       common.Address
+	IP            string
+	Port          int
+	Type          string
 	TCPConnection net.Conn
+	
 }
 
-func (conn Connection) SendMessage(message *pb.Message) error {
+func (conn *Connection) SendMessage(message *pb.Message) error {
+	if conn == nil {
+		return errors.New("nil conn")
+	}
+	conn.mu.Lock()
+	defer conn.mu.Unlock()
 	b, err := proto.Marshal(message)
 	if err != nil {
 		fmt.Printf("Error when marshal %v", err)
@@ -30,58 +37,69 @@ func (conn Connection) SendMessage(message *pb.Message) error {
 	}
 	length := make([]byte, 8)
 	binary.LittleEndian.PutUint64(length, uint64(len(b)))
-	conn.TCPConnection.Write(length)
-	conn.TCPConnection.Write(b)
+	if conn.TCPConnection == nil {
+		return errors.New("nil tcp connection")
+	}
+	_, err = conn.TCPConnection.Write(length)
+	if err != nil {
+		return err
+	}
+	_, err = conn.TCPConnection.Write(b)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func (conn *Connection) SendInitConnection(address string) {
-	bAddress, err := hex.DecodeString(address)
-	if err != nil {
-		fmt.Printf("Invalid address %v", err)
-	}
-	protoRs, _ := proto.Marshal(&pb.InitConnection{
-		Address: bAddress,
-		Type:    config.AppConfig.NodeType,
-	})
-	message := &pb.Message{
-		Header: &pb.Header{
-			Type:    "request",
-			From:    bAddress,
-			Command: "InitConnection",
-		},
-		Body: protoRs,
-	}
+func (conn *Connection) Close() {
+	conn.mu.Lock()
+	conn.TCPConnection.Close()
+	conn.mu.Unlock()
+}
 
-	err = conn.SendMessage(message)
-	if err != nil {
-		fmt.Printf("Error when send started %v", err)
+func getHeaderForCommand(config config.IConfig, message string) *pb.Header {
+	return &pb.Header{
+		Command: message,
+		Pubkey:  config.GetPubkey(),
+		Version: config.GetVersion(),
 	}
 }
 
-func (conn *Connection) SendSubscribeToAddress(address string) {
-	address = strings.ToLower(address)
-	bAddress := common.FromHex(address)
-	log.Infof("Subscribing to address %v", address)
-	message := &pb.Message{
-		Header: &pb.Header{
-			Command: "SubscribeToAddress",
-		},
-		Body: bAddress,
+func SendMessage(config config.IConfig, c *Connection, command string, pbMessage proto.Message) error {
+	body := []byte{}
+	if pbMessage != nil {
+		body, _ = proto.Marshal(pbMessage)
 	}
-
-	conn.SendMessage(message)
-
+	message := &pb.Message{
+		Header: getHeaderForCommand(config, command),
+		Body:   body,
+	}
+	err := c.SendMessage(message)
+	utilities.CheckInfoErr("Error when SendPack", err)
+	return err
 }
 
-func (conn *Connection) SendQueryLogs(q *pb.QueryLog) {
-	bData, _ := proto.Marshal(q)
+func SendBytes(config config.IConfig, c *Connection, command string, bytes []byte) {
 	message := &pb.Message{
-		Header: &pb.Header{
-			Command: "QueryLogs",
-		},
-		Body: bData,
+		Header: getHeaderForCommand(config, command),
+		Body:   bytes,
 	}
+	err := c.SendMessage(message)
+	utilities.CheckInfoErr("Error when SendPack", err)
+}
 
-	conn.SendMessage(message)
+func SendMessageWithWg(config config.IConfig, c *Connection, command string, pbMessage proto.Message, wg *sync.WaitGroup) {
+	body := []byte{}
+	if pbMessage != nil {
+		body, _ = proto.Marshal(pbMessage)
+	}
+	message := &pb.Message{
+		Header: getHeaderForCommand(config, command),
+		Body:   body,
+	}
+	err := c.SendMessage(message)
+	utilities.CheckInfoErr("Error when SendPack", err)
+	if wg != nil {
+		wg.Done()
+	}
 }

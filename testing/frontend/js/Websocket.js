@@ -1,18 +1,18 @@
+
 var flag =1;
+var output = document.getElementById("log-content");
+var approveToken="";
+var balanceToken="";
+var socket = new WebSocket("ws://127.0.0.1:3000/ws");
+var walletAddress = getElemenetById("wallet-id").innerHTML;
+// var walletAddressOwner = getElemenetById("wallet-id-owner").innerHTML;
 
-const output = document.getElementById("log-content");
-let approveToken="";
-let balanceToken="";
-const socket = new WebSocket("ws://127.0.0.1:3000/ws");
-const walletAddress = getElemenetById("wallet-id").innerHTML;
-// const walletAddressOwner = getElemenetById("wallet-id-owner").innerHTML;
-
-let socketActive = false;
+var socketActive = false;
 
 console.log("Imported");
 // * Websocket
 // Connect to server successfully
-const messageForm = {
+var messageForm = {
   type: "",
   message: "",
 };
@@ -26,8 +26,8 @@ socket.onopen = (msg) => {
   let walletMessage = structuredClone(messageForm);
   walletMessage.type = "WalletMessage";
   walletMessage.message = walletAddress;
-
   sendMessage(walletMessage);
+  fetch("/compoundToken");
 };
 
 // WS connection's closed
@@ -40,19 +40,14 @@ socket.onerror = (error) => {
   console.log("Socket Error: ", error);
 };
 socket.onmessage = (msg) => {
-// 9  let data1 = msg.data;
-  const data12 = JSON.parse(msg.data);
-  // console.log("data12:",data12.message)
+  var data12 = JSON.parse(msg.data);
   output.innerHTML += "Server: " + msg.data + "\n";
-  // console.log(data12.type);
   switch (data12.type) {
     case "GetPriceList":
       if(flag==1){
-        console.log('111');
         getElemenetById("token-B-input").value = data12.message;
 
       } else{
-        console.log('222');
         getElemenetById("token-A-input").value = data12.message;
         flag=1;
       }
@@ -92,41 +87,76 @@ socket.onmessage = (msg) => {
       case "GetBalance":
         switch (balanceToken){
           case "A":
-              document.getElementById('balanceA').innerHTML = data12.message
+              document.getElementById('balanceA').innerHTML = data12.message[0]
             break;
           case "B":
-              document.getElementById('balanceB').innerHTML = data12.message
+              document.getElementById('balanceB').innerHTML = data12.message[0]
             break;
           case "LP":
-            document.getElementById('balanceLP').innerHTML = data12.message
+            document.getElementById('balanceLP').innerHTML = data12.message[0]
+          break;
+          case "MTDA":
+              document.getElementById('balanceA').innerHTML = data12.message
+            break;
+          case "MTDB":
+            document.getElementById('balanceB').innerHTML = data12.message
           break;
 
           default:
             break;
         }
         break;
+      case "GetFarmPoolInfo":
+        loadDataCompound();
+      //   fetch("/staking");
+        // loadData(data12.message);
   
     default:
       break;
   }
+  // console.log("message:",data12.message.event)
+  // console.log("event day ne:", data12.message.event)
+  // console.log("event day ne:", typeof data12.message.event)
+  switch (data12.message.event) {
+    case "Deposit":
+      console.log("hiiiiiii", data12.message.data.pid)
+      var a = document.getElementById(`liquidity_${data12.message.data.pid}`).value
+     console.log("aaaaa", a);
+     var b =BigInt(a)+BigInt(data12.message.data.amount);
+     console.log("bbbb", b);
+     console.log("data12.message.data.amount", data12.message.data.amount)
+     document.getElementById(`liquidity_${data12.message.data.pid}`).value =b;
+     document.getElementById(`liquidity_${data12.message.data.pid}`).innerHTML =b
+     updateAPR(data12.message.data.pid);
+     break;
+    case "Withdraw":
+      console.log("hiaaaaaaa")
+      var c = document.getElementById(`liquidity_${data12.message.data.pid}`).value
+      var d =BigInt(c)-BigInt(data12.message.data.amount);
+      document.getElementById(`liquidity_${data12.message.data.pid}`).value =d;
+      document.getElementById(`liquidity_${data12.message.data.pid}`).innerHTML =d
+      updateAPR(data12.message.data.pid);
+      break;
+     
+  }
 };
 
 
-const wallAddress = getElemenetById("wallet-id").innerHTML;
+var wallAddress = getElemenetById("wallet-id").innerHTML;
 
 
 //Choose Token Address
-const $tokenA = document.getElementById('tokenA');
-const $createResultA = document.getElementById('create-resultA');
-const $tokenB = document.getElementById('tokenB');
-const $createResultB = document.getElementById('create-resultB');
-const $LPtoken = document.getElementById('LPtoken');
-const $createResultLP = document.getElementById('create-resultLP');
-const $tokenMTDA = document.getElementById('tokenMTDA');
-const $tokenMTDB = document.getElementById('tokenMTDB');
-let tokenAddressA ="";
-let tokenAddressB ="";
-let lpToken ="";
+var $tokenA = document.getElementById('tokenA');
+var $createResultA = document.getElementById('create-resultA');
+var $tokenB = document.getElementById('tokenB');
+var $createResultB = document.getElementById('create-resultB');
+var $LPtoken = document.getElementById('LPtoken');
+var $createResultLP = document.getElementById('create-resultLP');
+var $tokenMTDA = document.getElementById('tokenMTDA');
+var $tokenMTDB = document.getElementById('tokenMTDB');
+var tokenAddressA ="";
+var tokenAddressB ="";
+var lpToken ="";
 $tokenA.addEventListener('submit', async(e) => {
   e.preventDefault();
   document.getElementById('appstatus-a').innerHTML =""
@@ -142,11 +172,9 @@ $tokenA.addEventListener('submit', async(e) => {
   }
   if(flag==1){
     try{
-      console.log("getBalance111a")
-      tokenAddressA = name;
-      await getBalanceToken(name); 
-      console.log("getBalance222a")   
       $createResultA.innerHTML = name;
+      tokenAddressA = name;
+      await getBalanceToken(name);       
       balanceToken = "A";
     }catch(e){
       console.log(e)
@@ -171,11 +199,12 @@ $tokenB.addEventListener('submit', async(e) => {
   }
   if(flag==1){
     try{
+      $createResultB.innerHTML = name;
       tokenAddressB = name;
       console.log("getBalance111b")
       await getBalanceToken(name);
       console.log("getBalance222b")
-      $createResultB.innerHTML = name;
+      
       balanceToken ="B";
     }catch(e){
       console.log(e)
@@ -192,23 +221,25 @@ $tokenMTDB.addEventListener("click", async(e) => {
   document.getElementById('balanceB').innerHTML =""
   document.getElementById('appstatus-lp').innerHTML =""
   tokenAddressB = MTDToken.address;
-  // getBalanceToken(tokenAddressB);
+  getBalanceToken(tokenAddressB);
   $createResultB.innerHTML = MTDToken.address;
-  balanceToken = "LP";
+  balanceToken = "MTDB";
   
 });
+
 $tokenMTDA.addEventListener("click", async(e) => {
-  console.log("thuy day")
+  // console.log("thuy day")
   e.preventDefault();
   document.getElementById('appstatus-a').innerHTML =""
   document.getElementById('balanceA').innerHTML =""
   document.getElementById('appstatus-lp').innerHTML =""
   console.log(MTDToken)
   tokenAddressA = MTDToken.address;
-  // getBalanceToken(tokenAddressA);
+  getBalanceToken(tokenAddressA);
   $createResultA.innerHTML = MTDToken.address;
-  balanceToken = "LP";
+  balanceToken = "MTDA";
 });
+
 $LPtoken.addEventListener('submit', async(e) => {
   e.preventDefault();
   document.getElementById('appstatus-lp').innerHTML =""
@@ -236,51 +267,50 @@ $LPtoken.reset()
 
 });
 
-//GetPriceList   
-
-const getBalanceToken = (address) => {
+  
+//get balance of token
+var getBalanceToken = (address) => {
   console.log("getBalance333")
-    let getBalanceMessage = {
+  var getBalanceMessage = {
       type: "GetBalance",
-      message: `${address}`,  
+      message: `${address},${wallAddress}`,  
     }
     // console.log(getPriceMessage);
     sendMessage(getBalanceMessage);
     console.log("getBalance444")
 };
+var flagComp =0
+var getCompoundTab = () => {
 
-// let getPrice = (event) => {
-//   if (event.key == "Enter") {
-//     event.preventDefault();
-//     let getPriceMessage = {
-//       type: "GetPriceList",
-//       message: "",
-//     };
+  if (flagComp == 0){
+    console.log("getCompoundTab111")
+    var getCompoundTabMessage = {
+        type: "GetCompoundTab",
+        message: `${wallAddress}`,  
+      }
+      // console.log(getPriceMessage);
+      sendMessage(getCompoundTabMessage);
+      console.log("getCompoundTab444")
+  
+  }
+  flagComp =1
+};
+var getStakingTab = () => {
+  console.log("getStakingTab111")
+  let getFarmTable = structuredClone(messageForm);
+  getFarmTable.type = "GetFarmPoolInfo";
+  getFarmTable.message = "GetFarmPoolInfo";
+  sendMessage(getFarmTable);
+  console.log("getStakingTab444")
+  
+};
 
-//     switch (event.target.id) {
-//       case "token-A-input":
-//         // console.log("GetPriceList from token MTD for DDT");
-//         getPriceMessage.message = getElemenetById("token-A-input").value;
-//         // approveToken = "A";
-//         break;
-//       case "token-B-input":
-//         flag=0;
-//         // console.log("GetPriceList from token DDT for MTD");
-//         getPriceMessage.message = getElemenetById("token-B-input").value;
-//         // approveToken = "B";
-//         break;
-//       default:
-//         break;
-//     }
 
-//     // console.log(getPriceMessage);
-//     sendMessage(getPriceMessage);
-//   }
-// };
-let getPrice = (event) => {
+//GetPriceList 
+var getPrice = (event) => {
   if (event.key == "Enter") {
     event.preventDefault();
-    let getPriceMessage = {
+    var getPriceMessage = {
       type: "GetPriceList",
       message: "",
     };
@@ -315,71 +345,8 @@ getElemenetById("token-B-input").addEventListener("keypress", (event)=>{
   }
 });
 
-//Approve Button
-// const handleApproveBtn = () => {
-//   eraseAvailableQR();
-//   let inputMessage;
-//   switch (approveToken.toUpperCase()) {
-//     case "A":
-//       inputMessage = structuredClone(SMAToken.approve);
-//       inputMessage.parameter[1].value = SMRouter.address;
-//       inputMessage.parameter[2].value = getElemenetById("token-A-input").value;
-//       console.log(inputMessage);
-//       makeQR(formatInput("call", tokenAddressA, "", inputMessage.parameter));
-//       break;
-//     case "B":
-//       inputMessage = structuredClone(SMBToken.approve);
-//       inputMessage.parameter[1].value = SMRouter.address;
-//       inputMessage.parameter[2].value = getElemenetById("token-B-input").value;
-//       makeQR(formatInput("call", tokenAddressB, "", inputMessage.parameter));
-//       break;
-//     default:
-//       console.log("Approve token error");
-//       break;
-//   }
-// };
 
-// getElemenetById("approve-btn").addEventListener("click", handleApproveBtn);
-//
-// let priceAToB;
-
-// priceAToB = 2;
-
-// let priceBToA = 1 / priceAToB;
-
-// handleOnChange = (tokenName) => {
-//   switch (tokenName.toUpperCase()) {
-//     case "A":
-//       calculateTokenAToB();
-//       console.log("Calculate A");
-//       break;
-//     case "B":
-//       calculateTokenBToA();
-//       break;
-//     default:
-//       alert("Input wrong token name");
-//       break;
-//   }
-// };
-
-// let calculateTokenAToB = () => {
-//   let tokenAAmount = getElemenetById("token-A-input").value;
-//   let tokenBAmount = tokenAAmount * priceAToB;
-//   getElemenetById("token-B-input").value = tokenBAmount;
-// };
-
-// let calculateTokenBToA = () => {
-//   let tokenBAmount = getElemenetById("token-A-input").value;
-//   let tokenAAmount = tokenBAmount * priceBToA;
-//   getElemenetById("token-A-input").value = tokenAAmount;
-// };
-
-// let showTokenCurrency = () => {
-//   getElemenetById("price-content").value = priceAToB;
-// };
-
-
-const handleAdd = () => {
+var handleAdd = () => {
   //Send to backend a flag that this address is calling liquidity adding
   addMessage = structuredClone(messageForm);
   addMessage.type = "addliquidity";
@@ -421,15 +388,16 @@ const handleAdd = () => {
   eraseAvailableQR();
   makeQR(formatInput("call", SMRouter.address, amount, inputMessage.parameter));
 };
-const handleSwap = () => {
+
+var handleSwap = () => {
   //Send to backend a flag that this address is calling liquidity adding
   swapMessage = structuredClone(messageForm);
   swapMessage.type = "swap";
   swapMessage.message = walletAddress;
 
   sendMessage(swapMessage);
-  let inputMessage;
-  let amount;
+  var inputMessage;
+  var amount;
   if(tokenAddressA == MTDToken.address)
   {
     inputMessage = structuredClone(SMRouter.swapMTD);
@@ -462,7 +430,7 @@ const handleSwap = () => {
   eraseAvailableQR();
   makeQR(formatInput("call", SMRouter.address, amount, inputMessage.parameter));
 };
-const handleRemove = () => {
+var handleRemove = () => {
   //Send to backend a flag that this address is calling liquidity adding
   removeMessage = structuredClone(messageForm);
   removeMessage.type = "remove";
@@ -471,7 +439,7 @@ const handleRemove = () => {
   sendMessage(removeMessage);
 
   //Format input
-  let inputMessage = structuredClone(SMRouter.removeLiquidity);
+  var inputMessage = structuredClone(SMRouter.removeLiquidity);
   inputMessage.parameter[1].value = tokenAddressA;
   inputMessage.parameter[2].value = tokenAddressB;
   inputMessage.parameter[3].value = getElemenetById(`liquidity-input`).value;
@@ -483,9 +451,9 @@ const handleRemove = () => {
   makeQR(formatInput("call", SMRouter.address, "", inputMessage.parameter));
 };
 
-const handleApproveTokenA = () => {
+var handleApproveTokenA = () => {
   //Format input
-  let inputMessage = structuredClone(SMToken.approve);
+  var inputMessage = structuredClone(SMToken.approve);
   //Assign value to SMContract Parameter
   inputMessage.parameter[1].value = SMRouter.address; //spender
   inputMessage.parameter[2].value = getElemenetById(`token-A-input`).value; //amount value;
@@ -494,9 +462,9 @@ const handleApproveTokenA = () => {
   eraseAvailableQR();
   makeQR(formatInput("call", tokenAddressA, "", inputMessage.parameter));
 };
-const handleApproveTokenB = () => {
+var handleApproveTokenB = () => {
   //Format input
-  let inputMessage = structuredClone(SMToken.approve);
+  var inputMessage = structuredClone(SMToken.approve);
   //Assign value to SMContract Parameter
   inputMessage.parameter[1].value = SMRouter.address; //spender
   inputMessage.parameter[2].value = getElemenetById(`token-B-input`).value; //amount value;
@@ -505,9 +473,9 @@ const handleApproveTokenB = () => {
   eraseAvailableQR();
   makeQR(formatInput("call", tokenAddressB, "", inputMessage.parameter));
 };
-const handleApproveLPToken = () => {
+var handleApproveLPToken = () => {
   //Format input
-  let inputMessage = structuredClone(LPToken.approve);
+  var inputMessage = structuredClone(LPToken.approve);
   //Assign value to SMContract Parameter
   inputMessage.parameter[1].value = SMRouter.address; //spender
   inputMessage.parameter[2].value = getElemenetById(`liquidity-input`).value; //amount value;
@@ -517,37 +485,187 @@ const handleApproveLPToken = () => {
   makeQR(formatInput("call", LPToken.address, "", inputMessage.parameter));
 };
 
-// let  handleAppStatus= (event) => {
-//   event.preventDefault();
-//   let getApproveMessage = {
-//     type: "GetApprove",
-//     message: "",
-//   };
+var  handleAppStatus= (event) => {
+  event.preventDefault();
+  var getApproveMessage = {
+    type: "GetApprove",
+    message: "",
+  };
 
-//   switch (event.target.id) {
-//     case "appstatus-a-btn":
-//       getApproveMessage.message = tokenAddressA;
-//       approveToken = "A";
-//       break;
-//     case "appstatus-b-btn":
-//       getApproveMessage.message = tokenAddressB;
-//       approveToken = "B";
-//       break;
-//     case "appstatus-lp-btn":
+  switch (event.target.id) {
+    case "appstatus-a-btn":
+      getApproveMessage.message = `${tokenAddressA},${wallAddress}`;
+      approveToken = "A";
+      break;
+    case "appstatus-b-btn":
+      getApproveMessage.message = `${tokenAddressB},${wallAddress}`;
+      approveToken = "B";
+      break;
+    case "appstatus-lp-btn":
       
-//       getApproveMessage.message = lpToken;
-//       approveToken = "LP";
-//       break;
+      getApproveMessage.message = `${lpToken},${wallAddress}`;
+      approveToken = "LP";
+      break;
   
-//     default:
-//       break;
-//   }
+    default:
+      break;
+  }
 
-//   // console.log(getPriceMessage);
-//   sendMessage(getApproveMessage);
+  // console.log(getPriceMessage);
+  sendMessage(getApproveMessage);
 
-// };
+};
+var cakePerblock = 1* (10**18);
 
+var updateAPR = async(idPool) => {
+  console.log("updateAPR")
+  var APR ,lpReward,totalValueOfCake;
+    var farmBaseReward,totalFee,volume24h;
+  var priceOfCake = 20;//getAmountOut in router????
+  var cakePerYear=cakePerblock*60*60*24*365;
+  liquidity =document.getElementById(`liquidity_${idPool}`).value
+  multiplier = document.getElementById(`multiplier_${idPool}`).value
+  console.log("liquidity moi ne:",liquidity)
+  volume24h = 10000000000000000// dang fix cung theo usd
+  totalValueOfCake= cakePerYear *priceOfCake;
+  amountOfCakePerYear= multiplier * cakePerYear;
+  totalValueOfCake=amountOfCakePerYear*priceOfCake;
+  farmBaseReward= BigInt(totalValueOfCake)/liquidity*BigInt(100); //Percentage
+  totalFee= (volume24h*0.0017)*365;
+  lpReward = BigInt(totalFee)/liquidity*BigInt(100);
+  APR= farmBaseReward + lpReward;
+    // ListPar(i,result[1],"","",APR,liquidity,multiplier);
+    document.getElementById(`APR_${idPool}`).innerHTML =APR;
+    
+  
+}
+
+
+
+//Load Data in smart contract when open browser 
+var loadData = async(result2) => {
+  //Load list of Farm Pools
+  // var result =[]
+  for(var i=0 ;i<(result2.length);i++){
+  // result = result2.slice(i*4,4+i*4);
+  // var liquidity,farmBaseReward,totalFee,volume24h;
+  // var priceOfCake = 20;//getAmountOut in router????
+  // cakePerYear=cakePerblock*60*60*24*365;
+  // liquidity =result[2];
+  // multiplier = result[0];
+  // volume24h = 1000// dang fix cung theo usd
+  // totalValueOfCake= cakePerYear *priceOfCake;
+  // amountOfCakePerYear= multiplier * cakePerYear;
+  // totalValueOfCake=amountOfCakePerYear*priceOfCake;
+  // farmBaseReward= totalValueOfCake/liquidity*100; //Percentage
+  // totalFee= (volume24h*0.0017)*365;
+  // lpReward = totalFee/liquidity*100;
+  // APR= farmBaseReward + lpReward;
+  // APR = result[3];
+    ListPar(i,result[1],"","",APR,liquidity,multiplier);
+    document.getElementById(`liquidity_${i}`).value =liquidity;
+    document.getElementById(`APR_${i}`).value =APR;
+    document.getElementById(`multiplier_${i}`).value =multiplier;
+    
+  }
+}
+var loadDataCompound = ()=>{
+  fetch('/compoundToken')
+  .then(function(response) {
+    if (!response.ok) {
+      throw Error(response.statusText);
+    }
+    // Read the response as json.
+    return response.json();
+  })
+  .then(function(responseAsJson) {
+    // Do stuff with the JSON
+    var html1 = responseAsJson.map(function(token){  
+    ListSupply(token.address,token.supplyapr,"","")
+    ListBorrow(token.address,token.borrowapr,"",token.liquidity)
+    });
+    for (var key in responseAsJson){
+      getInfo(responseAsJson[key].address);
+      console.log("responseAsJson[key].address:",responseAsJson[key].address)
+    }
+    
+  })
+  .catch(function(error) {
+    console.log('Looks like there was a problem: \n', error);
+  });
+    
+}
+var getInfo = (tokenAdd)=>{
+  fetch('/compoundUser')
+  .then(function(response) {
+    if (!response.ok) {
+      throw Error(response.statusText);
+    }
+    // Read the response as json.
+    return response.json();
+  })
+  .then(function(responseAsJson) {
+    var html1 = responseAsJson[0].supplybalance
+    var html2 = responseAsJson[0].borrowbalance
+      for (var key in html1){
+        if(key==tokenAdd){
+        document.getElementById(`idSupplyWallet_${key}`).innerHTML =html1[key];
+          console.log("html1[key]:",html1[key])
+        }
+      }
+
+      for (var key in html2){
+        if(key==tokenAdd){
+          document.getElementById(`idBorWallet_${key}`).innerHTML =html2[key];
+          console.log("html2[key]:",html2[key])
+        }
+      }
+  })
+  .catch(function(error) {
+    console.log('Looks like there was a problem: \n', error);
+  }); 
+}
+//List Supply CompoundTab Table
+var ListSupply=async(a,b,c,d)=>{
+  var listPar = ` <tr >
+  <th class="text-center" width="25%" id="idSupplyAsset_${a}">${a}</th>
+  <th class="text-center" width="25%" id="idSupplyApy_${a}">${b}</th>
+  <th class="text-center" width="25%" id="idSupplyWallet_${a}">${c}</th>
+  <th class="text-center" width="25%" id="idSupplyColl_${a}">${d}</th>
+  </tr>`
+$('.supply_table tbody').append(listPar)   
+
+}
+//List Borrow CompoundTab Table
+var ListBorrow=async(a,b,c,d)=>{
+  var listPar = ` <tr >
+  <th class="text-center" width="25%" id="idBorAsset_${a}">${a}</th>
+  <th class="text-center" width="25%" id="idBorApy_${a}">${b}</th>
+  <th class="text-center" width="25%" id="idBorWallet_${a}">${c}</th>
+  <th class="text-center" width="25%" id="idBorLiquidity_${a}">${d}</th>
+  </tr>`
+$('.borrow_table tbody').append(listPar)   
+
+}
+
+
+//List Participant Table
+var ListPar=async(a,b,c,d,e,f,g)=>{
+  var listPar = ` <tr >
+  <th class="text-center" width="15%" id="idPool_${a}">${a}</th>
+  <th class="text-center" width="15%" id="name_${a}">${b}</th>
+  <th class="text-center" width="15%" id="boost_${a}">${c}</th>
+  <th class="text-center" width="15%" id="earn_${a}">${d}</th>
+  <th class="text-center" width="25%" id="APR_${a}" value=0>${e} </th>
+  <th class="text-center" width="15%" id="liquidity_${a}" value=0>${f}</th>
+  <th class="text-center" width="15%" id="multiplier_${a}" value=0>${g}</th>
+
+</tr>`
+$('.participants_table tbody').append(listPar)   
+
+}
+
+// getElemenetById("farm-table").addEventListener("click",handleFarmTable);
 
 getElemenetById("supply-btn").addEventListener("click",handleSwap);
 getElemenetById("add-btn").addEventListener("click",handleAdd);
@@ -559,14 +677,17 @@ getElemenetById("approve-lp-btn").addEventListener("click",handleApproveLPToken)
 getElemenetById("appstatus-a-btn").addEventListener("click",handleAppStatus);
 getElemenetById("appstatus-b-btn").addEventListener("click",handleAppStatus);
 getElemenetById("appstatus-lp-btn").addEventListener("click",handleAppStatus);
-let sendMessage = (msg) => {
+getElemenetById("compoundTab").addEventListener("click",getCompoundTab);
+getElemenetById("stakingTab").addEventListener("click",getStakingTab);
+
+var sendMessage = (msg) => {
   console.log(msg);
   socket.send(JSON.stringify(msg));
 };
-getElemenetById("reset-qr-btn").addEventListener("click", handleResetQR);
-const handleResetQR = () => {
-  eraseAvailableQR();
-};
+// getElemenetById("reset-qr-btn").addEventListener("click", handleResetQR);
+// var handleResetQR = () => {
+//   eraseAvailableQR();
+// };
 //addLiquidityMTD value=10000
 // f305d719
 // 000000000000000000000000b9C40c5054333975e4fEE5b2972f2481422CD48D token
@@ -576,7 +697,7 @@ const handleResetQR = () => {
 // 000000000000000000000000d85ae9a6ef6185aea70b1b18c3d3bfd1253ea74e to
 // 0000000000000000000000000000000000000000000000056bc75e2d63100000 time
 
-//   38ed1739
+// 38ed1739
 // 00000000000000000000000000000000000000000000000000000002540be400  10000000000
 // 0000000000000000000000000000000000000000000000000000000005f5e100  100000000
 // 00000000000000000000000000000000000000000000000000000000000000a0 160 line 5
@@ -586,6 +707,15 @@ const handleResetQR = () => {
 // 000000000000000000000000E6fBE813230f087813c35c950FC46e3bee4847D1 token1
 // 000000000000000000000000f1b5dc17F84FC6e0fA632BF81406748ABfb6F6Cd token2
 // call|3FFb75AcB68A021e978b8bEc4E4762d32060152f||
+// 38ed1739
+// 000000000000000000000000000000000000000000000000000000000010f447
+// 0000000000000000000000000000000000000000000000000000000000000000
+// 00000000000000000000000000000000000000000000000000000000000000a0
+// 000000000000000000000000f81751083e57b4ab07929a6ec931cca20464f393
+// 000000000000000000000000000000000000000000000001007a33ee6d770000
+// 0000000000000000000000000000000000000000000000000000000000000002
+// 00000000000000000000000045b1b47617195012803515df966009AFB708Ad25
+// 0000000000000000000000006B5B7Adc611AB1C9434fdf5A3357b8daDDA0b703
 
 // //swapExactETHForToken 
 // 7ff36ab5

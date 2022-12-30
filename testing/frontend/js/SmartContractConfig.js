@@ -1,54 +1,54 @@
-const SMAToken = {
-  address: "b9C40c5054333975e4fEE5b2972f2481422CD48D",
-  approve: {
-    name: "approve",
-    parameter: [
-      //Hash
-      {
-        type: "hash",
-        value: "095ea7b3",
-      },
+// const SMAToken = {
+//   address: "b9C40c5054333975e4fEE5b2972f2481422CD48D",
+//   approve: {
+//     name: "approve",
+//     parameter: [
+//       //Hash
+//       {
+//         type: "hash",
+//         value: "095ea7b3",
+//       },
 
-      //Parameter
-      {
-        name: "spender",
-        type: "address",
-        value: "",
-      },
-      {
-        name: "amount",
-        type: "num",
-        value: "",
-      },
-    ],
-  },
-};
+//       //Parameter
+//       {
+//         name: "spender",
+//         type: "address",
+//         value: "",
+//       },
+//       {
+//         name: "amount",
+//         type: "num",
+//         value: "",
+//       },
+//     ],
+//   },
+// };
 
-const SMBToken = {
-  address: "148b3c21920A743625974Bf7E7f3b8D675534b74",
-  approve: {
-    name: "approve",
-    parameter: [
-      //Hash
-      {
-        type: "hash",
-        value: "095ea7b3",
-      },
+// const SMBToken = {
+//   address: "148b3c21920A743625974Bf7E7f3b8D675534b74",
+//   approve: {
+//     name: "approve",
+//     parameter: [
+//       //Hash
+//       {
+//         type: "hash",
+//         value: "095ea7b3",
+//       },
 
-      //Parameter
-      {
-        name: "spender",
-        type: "address",
-        value: "",
-      },
-      {
-        name: "amount",
-        type: "num",
-        value: "",
-      },
-    ],
-  },
-};
+//       //Parameter
+//       {
+//         name: "spender",
+//         type: "address",
+//         value: "",
+//       },
+//       {
+//         name: "amount",
+//         type: "num",
+//         value: "",
+//       },
+//     ],
+//   },
+// };
 const SMToken = {
   // address: "148b3c21920A743625974Bf7E7f3b8D675534b74",
   approve: {
@@ -76,7 +76,7 @@ const SMToken = {
 };
 
 const LPToken = {
-  address: "d5a5d37db6f5afc7813649c095dc2a03d500d9f8",
+  address: "79c0494029712423ae93a8a7711fca15721b1929",
   approve: {
     name: "approve",
     parameter: [
@@ -102,11 +102,11 @@ const LPToken = {
 };
 
 const MTDToken = {
-  address: "695905E66f8b5b49f3753390c71ef763d6368959",
+  address: "2a955DBfa8ac000584Fd5c006af60B23F0888F6e",
 };
 
 const SMRouter = {
-  address: "3FFb75AcB68A021e978b8bEc4E4762d32060152f",
+  address: "2b00fAE7F567fEf7b1dfCF64067D344C8B055b0c",
   addLiquidity: {
     name: "addLiquidity",
     parameter: [
@@ -411,25 +411,5 @@ const SMRouter = {
 
 };
 
-const SMSimpleContract = {
-  address: "446FE900594Db41671937C4f4E8B341792fEb0B2",
-  numberChange: {
-    name: "numberChange",
-    parameter: [
-      //Hash
-      {
-        type: "hash",
-        value: "635fd2dd",
-      },
-
-      //Parameter
-      {
-        name: "value",
-        type: "num",
-        value: "",
-      },
-    ],
-  },
-};
 
 const DEADLINE = 18481141120000000000;

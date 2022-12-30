@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+
+	ccrypto "gitlab.com/meta-node/core/crypto"
 )
 
-type IConnection interface{}
 type Connection struct {
 	Address string `json:address`
 	Ip      string `json:ip`
@@ -17,7 +18,8 @@ type Connection struct {
 
 type Config struct {
 	Address                    string `json:"address"`
-	ByteAddress                []byte
+	ByteAddress                []byte `json:"-"`
+	BytePrivateKey             []byte `json:"-"`
 	Ip                         string `json:"ip"`
 	Port                       int    `json:"port"`
 	NodeType                   string `json:"node_type"`
@@ -33,7 +35,10 @@ type Config struct {
 	TransferFee                int    `json:"transfer_fee"`
 	GuaranteeAmount            int    `json:"guarantee_amount"`
 
+	Version          string     `json:"version"`
+	BytePublicKey    []byte     `json:"-"`
 	ParentConnection Connection `json:"parent_connection"`
+	ServerAddress    string     `json:"server_address"`
 }
 
 func loadConfig() Config {
@@ -49,7 +54,20 @@ func loadConfig() Config {
 	}
 	config.ByteAddress = byteAddress
 	log.Printf("Config loaded: %v\n", config)
+	config.BytePrivateKey, config.BytePublicKey, config.ByteAddress = ccrypto.GenerateKeyPairFromSecretKey(config.SecretKey)
 	return config
 }
 
 var AppConfig = loadConfig()
+
+func (config Config) GetVersion() string {
+	return config.Version
+}
+
+func (config Config) GetPubkey() []byte {
+	return config.BytePublicKey
+}
+
+func (config Config) GetPrivateKey() []byte {
+	return config.BytePrivateKey
+}

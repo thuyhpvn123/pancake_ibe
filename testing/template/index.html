@@ -8,16 +8,29 @@
 
     <title>Test</title>
     <!-- <link rel="stylesheet" href="/css/style_Swap.css"> -->
-    <link rel="stylesheet" href="/frontend/css/style_Swap.css">
+    <link rel="stylesheet" href="/frontend/css/style_Swap.css"  >
     <!-- CDN qrcodejs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
         integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
     <style>
+        * {
+        box-sizing: border-box;
+        }
+
+        .row {
+        display: flex;
+        }
+
+        .collumn{
+        flex: 50%;
+        padding: 5px;
+        }
         #swap .button-container #approve-lp-btn,#appstatus-lp-btn{
             background-color: green;
             color: #ffffff;
@@ -60,224 +73,395 @@
     </style>
 
 </head>
-<body>        
-    <div class="head-section">
-        <div id="swap">
-            <p>Address:
-                
-                <!-- <span id="wallet-id-user">2ef033c8b483eee372f2d157947e623eee1a4037</span> -->
-                <span id="wallet-id">9c987d2b2086c1171fce5c1adb568b7a9b0b1197</span>
-            </p>
-            <p id="currency">
-                
-                <span class="currency-value" id="currency-value"></span>
-                <span class="token-unit" id="token-A-unit">MTD</span>
-                <span>/</span>
-                <span class="token-unit" id="token-B-unit">DDT</span>
-            </p>
-
-            <!-- <input id="mesesage" type="text" class="message"> 
-            <button id="send-button" onclick="send()">Send</button> -->
-            <!-- <div class="mode-selection-container">
-                <button id="A-to-B-btn" class="mode-active">MTD to DDT</button>
-                <button id="B-to-A-btn" class="mode-disabled">DDT to MTD</button>
-                <p id="mode-content"></p>
-            </div> -->
-
-            <!-- Token A -->
-            <div class="token-container">
-                <div>
-                    <img class="logo"  src="/frontend/img/TokenA.png" alt="logo-token-a">
-                    <!-- <span class="token-name">MTD</span> -->
-                    <div>
-                        <!-- Button to Open the Modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1">
-                            TOKEN A
-                        </button>
-                        
-                        <!-- The Modal -->
-                        <div class="modal" id="myModal1">
-                            <div class="modal-dialog">
-                            <div class="modal-content">
-                        
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                <h4 class="modal-title">Select a Token</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-                        
-                                <!-- Modal body -->
-                                <div class="modal-body">
-                                    <form id="tokenA">
-                                        <div class="form-group">
-                                        <label for="tokenAName">Token Address</label>
-                                        <input id="tokenAName" type="text" class="form-control"></input>
-                                        <span class="error error_name"></span>
-                                        </div>
-                                        <button id='tokenMTDA'  class="btn btn-primary" >MTD</button>
-                                        <br>
-                                        <br>
-                                        
-                                        <button id='tokenAddressA' type="submit" class="btn btn-primary" >Submit</button>
-
-                                    </form>
+<body>   
+    <main class="main">
+        <!-- <h2>Toggleable Pills</h2> -->
+        <div class="container">
+          <br>
+          <!-- Nav pills -->
+          <ul class="nav nav-pills" role="tablist">
+            <li class="nav-item1">
+              <a class="nav-link active" data-toggle="pill" href="#home">Swap</a>
+            </li>
+            <li class="nav-item2">
+              <a class="nav-link" data-toggle="pill" href="#menu1" id="stakingTab">Staking</a>
+              <h2></h2>
+            </li>
+            <li class="nav-item3">
+              <a class="nav-link" data-toggle="pill" href="#menu2" id="compoundTab">Compound</a>
+            </li>
+    
+          </ul>
+        
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <!-- Swap Tab -->
+            <div id="home" class="container tab-pane active"><br>
+                <div class="head-section">
+                    <div id="swap">
+                        <p>Address:
+                            <!-- 31a92ddd510b1048ebcd84eea671122a3f120eb8 -->
+                            
+                            <!-- <span id="wallet-id-user">2ef033c8b483eee372f2d157947e623eee1a4037</span> -->
+                            <span id="wallet-id">aa39344b158f4004cac70bb4ace871a9b54baa1e</span>
+                        </p>
+                        <p id="currency">
+                            
+                            <span class="currency-value" id="currency-value"></span>
+                            <span class="token-unit" id="token-A-unit">MTD</span>
+                            <span>/</span>
+                            <span class="token-unit" id="token-B-unit">DDT</span>
+                        </p>
+            
+                        <!-- <input id="mesesage" type="text" class="message"> 
+                        <button id="send-button" onclick="send()">Send</button> -->
+                        <!-- <div class="mode-selection-container">
+                            <button id="A-to-B-btn" class="mode-active">MTD to DDT</button>
+                            <button id="B-to-A-btn" class="mode-disabled">DDT to MTD</button>
+                            <p id="mode-content"></p>
+                        </div> -->
+            
+                        <!-- Token A -->
+                        <div class="token-container">
+                            <div>
+                                <img class="logo"  src="/frontend/img/TokenA.png" alt="logo-token-a">
+                                <!-- <span class="token-name">MTD</span> -->
+                                <div>
+                                    <!-- Button to Open the Modal -->
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1">
+                                        TOKEN A
+                                    </button>
                                     
-
+                                    <!-- The Modal -->
+                                    <div class="modal" id="myModal1">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                    
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                            <h4 class="modal-title">Select a Token</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                    
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                <form id="tokenA">
+                                                    <div class="form-group">
+                                                    <label for="tokenAName">Token Address</label>
+                                                    <input id="tokenAName" type="text" class="form-control"></input>
+                                                    <span class="error error_name"></span>
+                                                    </div>
+                                                    <button id='tokenMTDA'  class="btn btn-primary" >MTD</button>
+                                                    <br>
+                                                    <br>
+                                                    
+                                                    <button id='tokenAddressA' type="submit" class="btn btn-primary" >Submit</button>
+            
+                                                </form>
+                                                
+            
+                                            </div>
+                                            
+                                            <!-- Modal footer -->
+                                            <!-- <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                            </div> -->
+                                    
+                                        </div>
+                                        </div>
+                                    </div>
                                 </div>
+                                <div id="create-resultA"></div>    
+                            </div>                   
+                            <p>Balance: <span id="balanceA"></span></p>
+                            <input id="token-A-input" type="number" class="token-input" placeholder="0.0" value="">
+                        </div>
+            
+                        <!-- Token B -->
+                        <div class="token-container">
+                            <div>
+                                <img class="logo" src="/frontend/img/TokenB.png" alt="logo-token-b">
+                                <!-- <span class="token-name">DDT</span> -->
+                                <div>
+                                    <!-- Button to Open the Modal -->
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal2">
+                                        TOKEN B
+                                    </button>
+                                    
+                                    <!-- The Modal -->
+                                    <div class="modal" id="myModal2">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                    
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                            <h4 class="modal-title">Select a Token</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                    
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                <form id="tokenB">
+                                                    <div class="form-group">
+                                                    <label for="tokenBName">Token Address</label>
+                                                    <input id="tokenBName" type="text" class="form-control"></input>
+                                                    <span class="error error_name"></span>
+                                                    </div>
+                                                    <button id='tokenMTDB'  class="btn btn-primary" >MTD</button>
+                                                    <br>
+                                                    <br>
+                                                
+                                                    <button id='tokenAddressB' type="submit" class="btn btn-primary" >Submit</button>
+            
+                                                </form>
+                                                
+            
+                                            </div>
+                                            <!-- Modal footer -->
+                                            <!-- <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                            </div> -->
+                                    
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="create-resultB"></div>
+            
+                            </div>
+                            <p>Balance: <span id="balanceB"></span></p>
+                            <input id="token-B-input" type="number" class="token-input" placeholder="0.0" value="">
+                        </div>
+            
+                        <!-- LP Token -->
+                        <div class="token-container">
+                            <div>
+                                <div>
+                                    <!-- Button to Open the Modal -->
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal3">
+                                        LP TOKEN
+                                    </button>
                                 
-                                <!-- Modal footer -->
-                                <!-- <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                </div> -->
-                        
-                            </div>
+                                    <!-- The Modal -->
+                                    <div class="modal" id="myModal3">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                    
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                            <h4 class="modal-title">Select a LP Token</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                    
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                <form id="LPtoken">
+                                                    <div class="form-group">
+                                                    <label for="tokenLPName">Token Address</label>
+                                                    <input id="tokenLPName" type="text" class="form-control"></input>
+                                                    <span class="error error_name"></span>
+                                                    </div>
+                                                    <button id='tokenAddressLP' type="submit" class="btn btn-primary" >Submit</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>  
+                                </div>
+                                <div id="create-resultLP">   
+                            </div>       
+                                <p>Balance: <span id="balanceLP"></span></p>
+                                <input id="liquidity-input" type="number" class="token-input" placeholder="0.0" value="">
                             </div>
                         </div>
-                    </div>
-                    <div id="create-resultA"></div>    
-                </div>                   
-                <p>Balance: <span id="balanceA"></span></p>
-                <input id="token-A-input" type="number" class="token-input" placeholder="0.0" value="">
-            </div>
-
-            <!-- Token B -->
-            <div class="token-container">
-                <div>
-                    <img class="logo" src="/frontend/img/TokenB.png" alt="logo-token-b">
-                    <!-- <span class="token-name">DDT</span> -->
-                    <div>
-                        <!-- Button to Open the Modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal2">
-                            TOKEN B
-                        </button>
-                        
-                        <!-- The Modal -->
-                        <div class="modal" id="myModal2">
-                            <div class="modal-dialog">
-                            <div class="modal-content">
-                        
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                <h4 class="modal-title">Select a Token</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-                        
-                                <!-- Modal body -->
-                                <div class="modal-body">
-                                    <form id="tokenB">
-                                        <div class="form-group">
-                                        <label for="tokenBName">Token Address</label>
-                                        <input id="tokenBName" type="text" class="form-control"></input>
-                                        <span class="error error_name"></span>
-                                        </div>
-                                        <button id='tokenMTDB'  class="btn btn-primary" >MTD</button>
-                                        <br>
-                                        <br>
-                                    
-                                        <button id='tokenAddressB' type="submit" class="btn btn-primary" >Submit</button>
-
-                                    </form>
-                                    
-
-                                </div>
-                                <!-- Modal footer -->
-                                <!-- <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                </div> -->
-                        
+            
+                        <!-- Buttons -->
+                        <div class="button-container">
+                            <!-- <button class="swap-button" id="price-btn" >Get Price A To B</button> -->
+                            <div>
+                                <button class="approve-button" id="approve-a-btn">Approve A</button>  
+                                <button class="approve-button" id="appstatus-a-btn">Approve A Status:<span id="appstatus-a"></span></button>                  
+                                <button class="approve-button" id="approve-b-btn">Approve B</button>    
+                                <button class="approve-button" id="appstatus-b-btn">Approve B Status:<span id="appstatus-b"></span></button>                  
+            
                             </div>
+                            <div>
+                                <button class="approve-btn" id="approve-lp-btn">Approve Liquidity</button>
+                                <button class="approve-button" id="appstatus-lp-btn">Approve LP Status:<span id="appstatus-lp"></span></button>                  
                             </div>
+                            <button class="supply-button" id="add-btn">Addiquility</button>
+                            <button class="remove-button" id="remove-btn">Remove</button>
+                            <button class="swap-button" id="supply-btn">Swap</button>
                         </div>
                     </div>
-                    <div id="create-resultB"></div>
-
-                </div>
-                <p>Balance: <span id="balanceB"></span></p>
-                <input id="token-B-input" type="number" class="token-input" placeholder="0.0" value="">
-            </div>
-
-            <!-- LP Token -->
-            <div class="token-container">
-                <div>
-                    <div>
-                        <!-- Button to Open the Modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal3">
-                            LP TOKEN
-                        </button>
-                    
-                        <!-- The Modal -->
-                        <div class="modal" id="myModal3">
-                            <div class="modal-dialog">
-                            <div class="modal-content">
-                        
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                <h4 class="modal-title">Select a LP Token</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-                        
-                                <!-- Modal body -->
-                                <div class="modal-body">
-                                    <form id="LPtoken">
-                                        <div class="form-group">
-                                        <label for="tokenLPName">Token Address</label>
-                                        <input id="tokenLPName" type="text" class="form-control"></input>
-                                        <span class="error error_name"></span>
-                                        </div>
-                                        <button id='tokenAddressLP' type="submit" class="btn btn-primary" >Submit</button>
-                                    </form>
-                                </div>
-                            </div>
-                            </div>
-                        </div>  
+            
+                    <div id="qrcode-section">
+                        <h4>QR Code</h4>
+                        <div class="qr-container">
+                            <div id="qrcode" class="qrcode"></div>
+                        </div>
+                        <button id="reset-qr-btn" class="reset-button">Remove QR</button>
                     </div>
-                    <div id="create-resultLP">   
-                </div>       
-                    <p>Balance: <span id="balanceLP"></span></p>
-                    <input id="liquidity-input" type="number" class="token-input" placeholder="0.0" value="">
+                </div>
+            
+                <div id="log-container">
+                    <h4>Log:</h5>
+                        <pre id="log-content"></pre>
+                </div>
+
+            </div> 
+            <!-- Farm Tab-->
+            <div id="menu1" class="container tab-pane fade"><br> 
+                <div class="container">
+                    <h1>FARMS</h1>
+                    <h2>Stake LP Token to earn</h2>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> 
+                        <div class="participants_table">
+                          <table class="table table-bordered table-striped">
+                            <thead class="thead-light">
+                              <tr >
+                                <th class="text-center" width="20%" >PoolID</th>
+                                <th class="text-center" width="20%" >Cake-BNB</th>
+                                <th class="text-center" width="20%">Boosted</th>
+                                <th class="text-center" width="20%">Earned</th>
+                                <th class="text-center" width="20%">APR</th>
+                                <th class="text-center" width="20%">Liquidity</th>
+                                <th class="text-center" width="20%">Multiplier</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr></tr>
+                            </tbody>
+                          </table>             
+          
+                        </div>             
+                      </div>    
+              
+                    </div>
+                </div>
+                <div id="log-container1">
+                    <h4>Log:</h5>
+                    <pre id="log-content1"></pre>
+                </div>
+
+            </div>
+            <!-- Compound Tab-->
+            <div id="menu2" class="container tab-pane fade"><br>
+                <div class="container bg-light">
+                    <div class="row">
+                        <div class="collumn">
+                                    <h3>Supply Balance:</h3>
+                                    <h2>SUPPLY MARKETS</h2>
+                        <!-- Supply Token -->
+                        <div class="token-container">
+                            <div>
+                                <div>
+                                    <!-- Button to Open the Modal -->
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1">
+                                        SUPPLY
+                                    </button>
+                                    
+                                    <!-- The Modal -->
+                                    <div class="modal" id="myModal1">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                    
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                            <h4 class="modal-title">Select a Token</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                    
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                <form id="supply">
+                                                    <div class="form-group">
+                                                    <label for="tokenAName">Amount</label>
+                                                    <input id="tokenAName" type="text" class="form-control"></input>
+                                                    <span class="error error_name"></span>
+                                                    </div>
+                                                    <br>
+                                                    <br>
+                                                    
+                                                    <button id='tokenAddressA' type="submit" class="btn btn-primary" >SUPPLY</button>
+            
+                                                </form>
+                                                
+            
+                                            </div>
+                                            
+                                            <!-- Modal footer -->
+                                            <!-- <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                            </div> -->
+                                    
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="create-resultA"></div>    
+                            </div>                   
+                            <p>Balance: <span id="balanceA"></span></p>
+                            <input id="token-A-input" type="number" class="token-input" placeholder="0.0" value="">
+                        </div>
+
+                                        <div class="supply_table">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="thead-light">
+                                            <tr >
+                                                <th class="text-center" width="25%" >Asset</th>
+                                                <th class="text-center" width="25%" >APY</th>
+                                                <th class="text-center" width="25%">Wallet</th>
+                                                <th class="text-center" width="25%">Collateral</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr></tr>
+                                            </tbody>
+                                        </table>             
+                                        </div>    
+        
+                                
+                            
+                        </div>
+                        <div class="collumn">
+                                <h3>Borrow Balance:</h3>
+                                <h2>BORROW MARKETS</h2>
+                                    <div class="borrow_table">
+                                    <table class="table table-bordered table-striped">
+                                        <thead class="thead-light">
+                                        <tr >
+                                            <th class="text-center" width="25%" >Asset</th>
+                                            <th class="text-center" width="25%" >APY</th>
+                                            <th class="text-center" width="25%">Wallet</th>
+                                            <th class="text-center" width="25%">Liquidity</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr></tr>
+                                        </tbody>
+                                    </table>             
+                                    </div>             
+                              
+                        </div>                  
+                    </div>
                 </div>
             </div>
-
-            <!-- Buttons -->
-            <div class="button-container">
-                <!-- <button class="swap-button" id="price-btn" >Get Price A To B</button> -->
-                <div>
-                    <button class="approve-button" id="approve-a-btn">Approve A</button>  
-                    <button class="approve-button" id="appstatus-a-btn">Approve A Status:<span id="appstatus-a"></span></button>                  
-                    <button class="approve-button" id="approve-b-btn">Approve B</button>    
-                    <button class="approve-button" id="appstatus-b-btn">Approve B Status:<span id="appstatus-b"></span></button>                  
-
-                </div>
-                <div>
-                    <button class="approve-btn" id="approve-lp-btn">Approve Liquidity</button>
-                    <button class="approve-button" id="appstatus-lp-btn">Approve LP Status:<span id="appstatus-lp"></span></button>                  
-                </div>
-                <button class="supply-button" id="add-btn">Addiquility</button>
-                <button class="remove-button" id="remove-btn">Remove</button>
-                <button class="swap-button" id="supply-btn">Swap</button>
-            </div>
+    
+            
+          </div>
         </div>
-
-        <div id="qrcode-section">
-            <h4>QR Code</h4>
-            <div class="qr-container">
-                <div id="qrcode" class="qrcode"></div>
-            </div>
-            <button id="reset-qr-btn" class="reset-button">Remove QR</button>
-        </div>
-    </div>
-
-    <div id="log-container">
-        <h4>Log:</h5>
-            <pre id="log-content"></pre>
-    </div>
-
+    
+    </main>
+         
 
     
       <!-- </script> -->
-      <script type="text/javascript" src="/frontend/js/SmartContractConfig.js"></script>
-      <script type="text/javascript" src="/frontend/js/Util.js"></script>
-      <script type="text/javascript" src="/frontend/js/Websocket.js"></script>
+      <script type="application/javascript" src="/frontend/js/SmartContractConfig.js"></script>
+      <script type="application/javascript" src="/frontend/js/Util.js"></script>
+      <script type="application/javascript" src="/frontend/js/Websocket.js"></script>
+
       <!-- <script src="./js/Swap.js"></script> -->
 </body>
 </html>

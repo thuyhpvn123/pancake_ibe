@@ -1,66 +1,46 @@
 package network
 
 import (
-	"fmt"
-	"net"
+	"strconv"
+	"strings"
 
+	"github.com/ethereum/go-ethereum/common"
 	log "github.com/sirupsen/logrus"
+	"gitlab.com/meta-node/client/config"
+	cn "gitlab.com/meta-node/core/network"
 )
 
 type Server struct {
-	Address               string
-	IP                    string
-	Port                  int
-	MessageHandler        *MessageHandler
-	UnInitedConnections   []Connection
-	InitedConnections     map[string]Connection
-	InitedConnectionsChan chan Connection
-	RemoveConnectionChan  chan Connection
+	Address        string
+	IP             string
+	Port           int
+	MessageHandler *MessageHandler
 }
 
-func (server *Server) Run() {
-	log.Info(fmt.Sprintf("Starting server at port %d", server.Port))
-	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", server.IP, server.Port))
-	if err != nil {
-		log.Error(err)
-	}
-	defer listener.Close()
-
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			log.Error(err)
-		}
-
-		myConn := &Connection{
-			TCPConnection: conn,
-		}
-		server.MessageHandler.OnConnect(myConn, server.Address)
-		go server.MessageHandler.HandleConnection(myConn)
-	}
-}
-
-func (server *Server) ConnectToParent(connection *Connection) {
-	conn, err := net.Dial("tcp", fmt.Sprintf("%v:%v", connection.IP, connection.Port))
+func (server *Server) ConnectToParent(connection *cn.Connection) {
+	err := connection.Connect()
 	if err != nil {
 		log.Warn("Error when connect to %v:%v, wallet adress : %v", err)
 	} else {
-		connection.TCPConnection = conn
 		server.MessageHandler.OnConnect(connection, server.Address)
 		go server.MessageHandler.HandleConnection(connection)
 	}
 }
 
-func ConnectToServer(serverConnectionStr string, channel chan interface{}) *Connection {
-	conn, err := net.Dial("tcp", serverConnectionStr)
+func ConnectToServer(serverConnectionStr string, chData chan interface{}) *cn.Connection {
+	split := strings.Split(serverConnectionStr, ":")
+	port, _ := strconv.Atoi(split[1])
+	conn := cn.NewConnection(common.Address{}, split[0], port, "")
+	err := conn.Connect()
+
 	if err != nil {
 		panic(err)
 	}
 
-	connection := &Connection{
-		TCPConnection: conn,
+	messageHandler := MessageHandler{
+		config.AppConfig,
+		chData,
 	}
-	messageHandler := MessageHandler{channel}
-	go messageHandler.HandleConnection(connection)
-	return connection
+	go messageHandler.HandleConnection(conn)
+	return conn
 }

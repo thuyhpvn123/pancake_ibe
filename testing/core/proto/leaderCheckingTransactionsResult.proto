@@ -1,9 +1,0 @@
-syntax = "proto3";
-package leaderCheckingTransactionsResult;
-
-option go_package = "/proto";
-
-message LeaderCheckingTransactionsResult {
-    repeated bytes ValidTransactionHashes = 1;
-    repeated bytes InvalidTransactionHashes = 2;
-}
